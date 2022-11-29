@@ -21,10 +21,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^6.6.5",
-    "nodemon": "^2.0.20",
-    "pg": "^8.8.0",
-    "sequelize": "^6.25.0",
-    "uuid": "^9.0.0"
+    "nodemon": "^2.0.20"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -35,8 +32,6 @@
     "@types/lodash": "^4.14.186",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.8.3",
-    "@types/pg": "^8.6.5",
-    "@types/uuid": "^8.3.4",
     "typescript": "^4.8.4"
   }
 }
