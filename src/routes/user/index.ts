@@ -1,9 +1,8 @@
-import { Router } from 'express';
-import bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
-import jwt from 'jsonwebtoken';
-import moment from 'moment';
-import { floor } from 'lodash';
+import { Router } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import moment from "moment";
+import { floor } from "lodash";
 const router = Router();
 
 // router.post('/signup', async (req, res) => {
