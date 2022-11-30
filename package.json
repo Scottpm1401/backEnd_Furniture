@@ -2,7 +2,7 @@
   "name": "furniture_backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "start": "node dist/index.js",
     "build": "npx tsc",
