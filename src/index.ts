@@ -66,7 +66,7 @@ const StartServer = () => {
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
-    res.status(200).json({ hello: 'world' })
+    res.status(200).json({ messsage: 'pong' })
   );
 
   /** Error handling */
