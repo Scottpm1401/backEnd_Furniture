@@ -19,7 +19,7 @@
     "typeRoots": ["./node_modules/@types"],
     "rootDir": "./src",
     "esModuleInterop": true,
-    "outDir": "./dist"
+    "outDir": "dist"
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"],
