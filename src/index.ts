@@ -39,7 +39,20 @@ const StartServer = () => {
 
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-  app.use(cors());
+  app.use(
+    cors({
+      origin: process.env.FRONT_END_URL,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      credentials: true,
+      allowedHeaders: [
+        'Content-Type',
+        'X-Requested-With',
+        'X-HTTP-Method-Override',
+        'Accept',
+        'Authorization',
+      ],
+    })
+  );
   app.set('trust proxy', 1);
 
   /** Rules of our API */
