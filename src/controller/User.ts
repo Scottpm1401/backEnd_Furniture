@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { floor } from 'lodash';
-import User from '../models/User';
+import User from '../models/user';
 import { tokenGen, getIdFromReq } from '../utils/token';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
