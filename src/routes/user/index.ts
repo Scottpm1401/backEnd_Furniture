@@ -21,6 +21,7 @@ router.patch(
   validateAdmin,
   controller.updateUser
 );
+router.post('/refresh_token', controller.refreshToken);
 router.patch('/update_self', validateToken, controller.updateSelfUser);
 
 export default router;

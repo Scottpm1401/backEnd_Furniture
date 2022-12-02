@@ -4,7 +4,9 @@ import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { floor } from 'lodash';
 import User from '../models/user';
-import { tokenGen, getIdFromReq } from '../utils/token';
+import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
+
+let refreshTokens: string[] = [];
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -33,7 +35,8 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
           { _id: _id.toString(), role: savedUser.role },
           7
         );
-        const refreshToken = tokenGen({ accessToken: token }, 30);
+        const refreshToken = tokenGen({ _id: _id.toString() }, 30);
+        refreshTokens.push(refreshToken);
         return res
           .status(201)
           .json({ accessToken: token, expiredDate, refreshToken });
@@ -59,7 +62,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           { _id: user._id.toString(), role: user.role },
           7
         );
-        const refreshToken = tokenGen({ accessToken: token }, 30);
+        const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
+        refreshTokens.push(refreshToken);
         return res
           .status(200)
           .json({ accessToken: token, expiredDate, refreshToken });
@@ -179,6 +183,41 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const refreshToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { refreshToken } = req.body;
+    if (
+      refreshToken &&
+      refreshTokens.findIndex((token) => token === refreshToken) > -1
+    ) {
+      const { _id } = parseJwt(refreshToken);
+      const user = await User.findById(_id);
+      if (user) {
+        const expiredDate = floor(moment().add(7, 'days').valueOf() / 1000);
+        const token = tokenGen(
+          { _id: user._id.toString(), role: user.role },
+          7
+        );
+        const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
+        refreshTokens.push(refreshToken);
+        return res
+          .status(200)
+          .json({ accessToken: token, expiredDate, refreshToken });
+      } else {
+        return res.status(404).json({ message: 'User Not Found' });
+      }
+    } else {
+      return res.status(500).json({ message: 'Invalid Refresh Token' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
 export default {
   login,
   signup,
@@ -188,4 +227,5 @@ export default {
   updateSelfUser,
   deleteUser,
   getAllUser,
+  refreshToken,
 };
