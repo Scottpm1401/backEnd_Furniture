@@ -69,5 +69,4 @@ const userSchema = new Schema({
   cart: [ProductCart],
 });
 
-const User = model<UserTypeModel>('User', userSchema);
-export default User;
+export default model<UserTypeModel>('User', userSchema);
