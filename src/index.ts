@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import Logging from './library/Logging';
-import testRouter from './routes/user';
+import userRouter from './routes/user';
 import { config } from 'dotenv';
 import cors from 'cors';
 
@@ -75,7 +75,7 @@ const StartServer = () => {
   });
 
   /** Routes */
-  app.use('/user', testRouter);
+  app.use('/user', userRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
