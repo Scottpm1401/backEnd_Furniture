@@ -202,11 +202,8 @@ const refreshToken = async (
           { _id: user._id.toString(), role: user.role },
           7
         );
-        const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
         refreshTokens.push(refreshToken);
-        return res
-          .status(200)
-          .json({ accessToken: token, expiredDate, refreshToken });
+        return res.status(200).json({ accessToken: token, expiredDate });
       } else {
         return res.status(404).json({ message: 'User Not Found' });
       }
