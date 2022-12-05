@@ -3,14 +3,15 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { floor } from 'lodash';
-import User from '../models/user';
+import User, { UserType } from '../models/user';
 import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
 
 let refreshTokens: string[] = [];
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { displayName, email, username, password, birthday } = req.body;
+    const { displayName, email, username, password, birthday } =
+      req.body as UserType;
     const findUser = await User.find({ email });
 
     if (findUser.length > 0) {
@@ -116,7 +117,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(500).json({ message: 'Username already existed' });
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const updatedUser = await User.updateOne(
+      const updatedUser = await User.findOneAndUpdate(
         { _id },
         {
           $set: {
@@ -128,9 +129,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
             email,
             password: hashedPassword,
           },
-        }
+        },
+        { new: true }
       );
-      return res.status(200).json({ success: true });
+      return res.status(200).json(updatedUser);
     }
   } catch (err) {
     return res.status(500).json({ message: err });

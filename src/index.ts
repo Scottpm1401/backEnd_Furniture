@@ -3,6 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import Logging from './library/Logging';
 import userRouter from './routes/user';
+import productRouter from './routes/product';
 import { config } from 'dotenv';
 import cors from 'cors';
 
@@ -76,6 +77,7 @@ const StartServer = () => {
 
   /** Routes */
   app.use('/user', userRouter);
+  app.use('/product', productRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
