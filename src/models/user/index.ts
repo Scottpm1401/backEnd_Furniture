@@ -1,5 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
-import { ProductCart, ProductCartType } from './cart';
+import { ProductCart, ProductCartType } from '../cart';
 
 /*********************TYPE & INTERFACE*****************************/
 
