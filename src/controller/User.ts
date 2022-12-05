@@ -151,11 +151,12 @@ const updateSelfUser = async (
     if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
       return res.status(500).json({ message: 'Username already existed' });
     } else {
-      const updatedUser = await User.updateOne(
+      const updatedUser = await User.findOneAndUpdate(
         { _id },
-        { $set: { displayName, username, birthday, info } }
+        { $set: { displayName, username, birthday, info } },
+        { new: true }
       );
-      return res.status(200).json({ success: true });
+      return res.status(200).json(updatedUser);
     }
   } catch (err) {
     return res.status(500).json({ message: err });

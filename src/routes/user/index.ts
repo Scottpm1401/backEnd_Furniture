@@ -20,6 +20,7 @@ router.patch(
   '/update/:id',
   validateToken,
   validateAdmin,
+  ValidateJoi(Schemas.user.update),
   controller.updateUser
 );
 router.post('/refresh_token', controller.refreshToken);
