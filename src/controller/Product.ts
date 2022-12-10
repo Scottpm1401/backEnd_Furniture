@@ -183,10 +183,12 @@ const ratingProduct = async (
             { _id: product_id },
             {
               $addToSet: {
-                user_id: user._id,
-                name: user.username,
-                email: user.email,
-                phone: user.info.phone,
+                review: {
+                  user_id: user._id,
+                  name: user.username,
+                  email: user.email,
+                  phone: user.info.phone,
+                },
               },
 
               $set: {

@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import Logging from './library/Logging';
 import userRouter from './routes/user';
 import productRouter from './routes/product';
+import paymentRouter from './routes/payment';
 import { config } from 'dotenv';
 import cors from 'cors';
 
@@ -78,6 +79,7 @@ const StartServer = () => {
   /** Routes */
   app.use('/user', userRouter);
   app.use('/product', productRouter);
+  app.use('/payment', paymentRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
