@@ -20,5 +20,6 @@ router.delete(
   validateAdmin,
   controller.deleteProduct
 );
+router.post('/rating/:id', validateToken, controller.ratingProduct);
 
 export default router;

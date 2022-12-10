@@ -1,5 +1,6 @@
 /*********************TYPE & INTERFACE*****************************/
 export type ProductCartType = {
+  product_id: string;
   img: string;
   title: string;
   price: number;
@@ -9,6 +10,7 @@ export type ProductCartType = {
 
 /*******************************SCHEMA*****************************/
 export const ProductCart = {
+  product_id: { type: String, required: true },
   img: { type: String, required: true },
   title: { type: String, required: true },
   price: { type: Number, required: true },

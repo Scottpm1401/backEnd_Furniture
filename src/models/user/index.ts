@@ -1,5 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import { ProductCart, ProductCartType } from '../cart';
+import { Purchase } from '../purchase';
 
 /*********************TYPE & INTERFACE*****************************/
 
@@ -67,6 +68,7 @@ const userSchema = new Schema({
   birthday: { type: String, required: true },
   info: UserInfo,
   cart: [ProductCart],
+  purchase: [Purchase],
 });
 
 export default model<UserTypeModel>('User', userSchema);
