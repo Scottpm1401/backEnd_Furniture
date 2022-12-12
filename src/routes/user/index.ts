@@ -9,6 +9,7 @@ const router = Router();
 //Auth routes
 router.post('/signup', ValidateJoi(Schemas.user.create), controller.signup);
 router.post('/login', ValidateJoi(Schemas.user.login), controller.login);
+router.post('/logout', validateToken, controller.logout);
 router.post('/refresh_token', controller.refreshToken);
 
 //User Routes (role==='USER')

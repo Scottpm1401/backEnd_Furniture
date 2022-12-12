@@ -26,7 +26,6 @@ export type ProductType = {
   price: number;
   sku: string;
   storage_quantity: number;
-  shipping?: number;
   colors: string[];
 };
 
@@ -58,7 +57,6 @@ const productSchema = new Schema({
   price: { type: Number, required: true },
   sku: { type: String, required: true },
   storage_quantity: { type: Number, default: 0 },
-  shipping: Number,
   colors: { type: [String], default: [] },
 });
 

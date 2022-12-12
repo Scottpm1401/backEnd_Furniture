@@ -49,12 +49,11 @@ const createProduct = async (
       brand,
       price,
       sku,
-      shipping,
       storage_quantity,
       colors,
       review,
       rating,
-    } = req.body as ProductType;
+    }: ProductType = req.body;
     const _id = new mongoose.Types.ObjectId();
     const product = new Product({
       _id,
@@ -66,7 +65,6 @@ const createProduct = async (
       brand,
       price,
       sku,
-      shipping,
       storage_quantity,
       colors,
       review,
@@ -99,12 +97,11 @@ const updateProduct = async (
       brand,
       price,
       sku,
-      shipping,
       storage_quantity,
       colors,
       review,
       rating,
-    } = req.body as ProductType;
+    }: ProductType = req.body;
     const updatedProduct = await Product.findOneAndUpdate(
       { _id },
       {
@@ -117,7 +114,6 @@ const updateProduct = async (
           brand,
           price,
           sku,
-          shipping,
           storage_quantity,
           colors,
           review,

@@ -1,6 +1,6 @@
 import { Schema, model, Document } from 'mongoose';
 import { ProductCart, ProductCartType } from '../cart';
-import { Purchase } from '../purchase';
+import { Purchase, PurchaseType } from '../purchase';
 
 /*********************TYPE & INTERFACE*****************************/
 
@@ -35,7 +35,9 @@ export type UserType = {
   role: 'ADMIN' | 'USER';
   birthday: string;
   info: UserInfoType;
+  cart_total: number;
   cart: ProductCartType[];
+  purchase: PurchaseType[];
 };
 
 export type UserTypeModel = {} & UserType & Document;
@@ -67,6 +69,7 @@ const userSchema = new Schema({
   role: { type: String, enum: ['USER', 'ADMIN'], default: 'USER' },
   birthday: { type: String, required: true },
   info: UserInfo,
+  cart_total: { type: Number, default: 0 },
   cart: [ProductCart],
   purchase: [Purchase],
 });

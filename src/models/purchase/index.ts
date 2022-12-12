@@ -1,3 +1,4 @@
+import { ProductCartType } from '../cart';
 import { Address, AddressType } from '../user';
 
 /*********************TYPE & INTERFACE*****************************/
@@ -19,14 +20,8 @@ export type BillingDetailsType = {
 };
 
 export type PurchaseProduct = {
-  product_id: string;
-  img: string;
-  title: string;
-  price: number;
-  color: string;
-  quantity: number;
   rating?: number;
-};
+} & ProductCartType;
 
 /*******************************SCHEMA*****************************/
 
