@@ -15,5 +15,5 @@ export const getIdFromReq = (req: Request) => {
   const token = req.header('Authorization')?.slice(7); // cut Beare
   const _id = parseJwt(token ?? '')._id;
 
-  return _id;
+  return _id as string;
 };

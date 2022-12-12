@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import moment from 'moment';
-import User, { UserType } from '../models/user';
+import User from '../models/user';
 import { getIdFromReq } from '../utils/token';
 import Product from '../models/product';
 import { ProductCartType } from '../models/cart';
@@ -23,7 +21,11 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
         };
         const user = await User.findOneAndUpdate(
           { _id },
-          { $addToSet: { cart: newProductCart } },
+          {
+            $addToSet: { cart: newProductCart },
+            $inc: { cart_total: product.price },
+          },
+
           { new: true }
         );
         if (user) {
@@ -50,10 +52,15 @@ const removeFromCart = async (
   try {
     const _id = getIdFromReq(req);
     const { product_id, color } = req.body;
-    if (product_id && color) {
+    const user_cart = (await User.findById(_id))?.cart;
+    const product = user_cart?.find((item) => item.product_id === product_id);
+    if (product_id && color && product && user_cart) {
       const user = await User.findOneAndUpdate(
-        { _id },
+        { _id, cart: { $elemMatch: { product_id, color } } },
         {
+          $inc: {
+            cart_total: -(product.price * product.quantity),
+          },
           $pull: {
             cart: { product_id, color },
           },
@@ -83,6 +90,7 @@ const clearCart = async (req: Request, res: Response, next: NextFunction) => {
       {
         $set: {
           cart: [],
+          cart_total: 0,
         },
       },
       { new: true }
@@ -105,12 +113,14 @@ const updateProductCartQuantity = async (
   try {
     const _id = getIdFromReq(req);
     const { product_id, color, quantity } = req.body;
-    if (product_id && color && quantity) {
+    const product = await Product.findById(product_id);
+    if (product_id && product && color && quantity) {
       const user = await User.findOneAndUpdate(
         { _id, cart: { $elemMatch: { product_id, color } } },
         {
           $inc: {
             'cart.$.quantity': quantity,
+            cart_total: product.price * quantity,
           },
         },
         { new: true }

@@ -2,16 +2,23 @@ import { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
-import { floor } from 'lodash';
+import { floor, parseInt } from 'lodash';
 import User, { UserType } from '../models/user';
 import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
+import {
+  LoginRequest,
+  LogoutRequest,
+  RefreshTokenRequesst,
+  UpdateSelfUserRequest,
+  UpdateUserRequest,
+} from '../models/api/user';
 
 let refreshTokens: string[] = [];
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { displayName, email, username, password, birthday } =
-      req.body as UserType;
+    const { displayName, email, username, password, birthday }: UserType =
+      req.body;
     const findUser = await User.find({ email });
 
     if (findUser.length > 0) {
@@ -28,6 +35,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         birthday,
         info: undefined,
         cart: [],
+        purchase: [],
       });
       const savedUser = await user.save();
       if (savedUser) {
@@ -50,7 +58,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, username, password } = req.body;
+    const { email, username, password }: LoginRequest = req.body;
     const findUser = username
       ? await User.find({ username })
       : await User.find({ email });
@@ -74,6 +82,18 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     } else {
       return res.status(500).json({ message: 'Invalid Email or Username' });
     }
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
+const logout = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { refreshToken }: LogoutRequest = req.body;
+    if (refreshToken) {
+      refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+    }
+    return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -110,13 +130,22 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = req.params.id;
-    const { displayName, username, birthday, info, role, email, password } =
-      req.body;
+    const {
+      displayName,
+      username,
+      birthday,
+      info,
+      role,
+      email,
+      password,
+    }: UpdateUserRequest = req.body;
     const findUser = await User.find({ username });
     if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
       return res.status(500).json({ message: 'Username already existed' });
     } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = password
+        ? await bcrypt.hash(password, 10)
+        : undefined;
       const updatedUser = await User.findOneAndUpdate(
         { _id },
         {
@@ -146,7 +175,8 @@ const updateSelfUser = async (
 ) => {
   try {
     const _id = getIdFromReq(req);
-    const { displayName, username, birthday, info } = req.body;
+    const { displayName, username, birthday, info }: UpdateSelfUserRequest =
+      req.body;
     const findUser = await User.find({ username });
     if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
       return res.status(500).json({ message: 'Username already existed' });
@@ -192,7 +222,7 @@ const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken }: RefreshTokenRequesst = req.body;
     if (
       refreshToken &&
       refreshTokens.findIndex((token) => token === refreshToken) > -1
@@ -220,6 +250,7 @@ const refreshToken = async (
 
 export default {
   login,
+  logout,
   signup,
   getUser,
   getSelfUser,
