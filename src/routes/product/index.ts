@@ -7,6 +7,7 @@ const router = Router();
 
 router.get('/all', controller.getAllProducts);
 router.get('/get/:id', controller.getProduct);
+router.get('/featured', controller.getFeaturedProducts);
 router.post('/create', validateToken, validateAdmin, controller.createProduct);
 router.patch(
   '/update/:id',

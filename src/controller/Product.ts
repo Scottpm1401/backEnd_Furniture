@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import Product, { ProductType, RatingType } from '../models/product';
+import mongoose, { FilterQuery } from 'mongoose';
+import Product, {
+  ProductType,
+  ProductTypeModel,
+  RatingType,
+} from '../models/product';
 import User from '../models/user';
 import { getIdFromReq } from '../utils/token';
 
@@ -10,13 +14,50 @@ const getAllProducts = async (
   next: NextFunction
 ) => {
   try {
-    const { offset, limit } = req.query;
-    const products = await Product.find()
+    const { offset, limit, title, category, brand, color, price } = req.query;
+
+    const titleFilter = title ? { $text: { $search: title.toString() } } : {};
+    const categoryFilter = category ? { category: category.toString() } : {};
+    const brandFilter = brand ? { brand: brand.toString() } : {};
+    const colorFilter = color ? { colors: { $in: [color.toString()] } } : {};
+    const priceFilter = price
+      ? { price: { $lte: parseFloat(price.toString()) } }
+      : {};
+    const filter: FilterQuery<ProductTypeModel> = {
+      ...titleFilter,
+      ...categoryFilter,
+      ...brandFilter,
+      ...colorFilter,
+      ...priceFilter,
+    };
+
+    const products = await Product.find(filter)
+      .sort()
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
     return res.status(200).json(products);
   } catch (err) {
     return res.status(500).json({ message: err });
+  }
+};
+
+const getFeaturedProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { limit } = req.query;
+    const featuredProducts = await Product.find()
+      .sort({
+        'rating.rate': 'desc',
+        'rating.num_of_rate': 'desc',
+        price: 'desc',
+      })
+      .limit(parseInt(limit?.toString() ?? '3'));
+    return res.status(200).json(featuredProducts);
+  } catch (err) {
+    return res.status(500).json({ messsage: err });
   }
 };
 
@@ -215,6 +256,7 @@ const ratingProduct = async (
 };
 
 export default {
+  getFeaturedProducts,
   getAllProducts,
   getProduct,
   createProduct,
