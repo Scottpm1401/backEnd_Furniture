@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
 import Product, {
+  ProductSort,
   ProductType,
   ProductTypeModel,
   RatingType,
@@ -14,7 +15,8 @@ const getAllProducts = async (
   next: NextFunction
 ) => {
   try {
-    const { offset, limit, title, category, brand, color, price } = req.query;
+    const { offset, limit, title, category, brand, color, price, sort } =
+      req.query;
 
     const titleFilter = title ? { $text: { $search: title.toString() } } : {};
     const categoryFilter = category ? { category: category.toString() } : {};
@@ -30,9 +32,27 @@ const getAllProducts = async (
       ...colorFilter,
       ...priceFilter,
     };
+    let sortBy = {};
+    switch (sort?.toString()) {
+      case ProductSort.price_des:
+        sortBy = { price: -1 };
+        break;
+      case ProductSort.price_asc:
+        sortBy = { price: 1 };
+        break;
+      case ProductSort.name_des:
+        sortBy = { title: -1 };
+        break;
+      case ProductSort.name_asc:
+        sortBy = { title: 1 };
+        break;
+      default:
+        sortBy = {};
+        break;
+    }
 
     const products = await Product.find(filter)
-      .sort()
+      .sort(sortBy)
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
     return res.status(200).json(products);

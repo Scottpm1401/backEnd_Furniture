@@ -2,6 +2,13 @@ import { Schema, model, Document } from 'mongoose';
 
 /*********************TYPE & INTERFACE*****************************/
 
+export enum ProductSort {
+  price_asc = 'PRICE_ASC',
+  price_des = 'PRICE_DES',
+  name_asc = 'NAME_ASC',
+  name_des = 'NAME_DES',
+}
+
 export type RatingType = {
   rate: number;
   num_of_rate: number;
