@@ -5,6 +5,7 @@ import Logging from './library/Logging';
 import userRouter from './routes/user';
 import productRouter from './routes/product';
 import paymentRouter from './routes/payment';
+import uploadRouter from './routes/upload';
 import { config } from 'dotenv';
 import cors from 'cors';
 
@@ -87,6 +88,7 @@ const StartServer = () => {
   app.use('/user', userRouter);
   app.use('/product', productRouter);
   app.use('/payment', paymentRouter);
+  app.use('/upload', uploadRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
