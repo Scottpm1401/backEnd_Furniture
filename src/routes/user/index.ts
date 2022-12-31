@@ -15,6 +15,7 @@ router.post('/refresh_token', controller.refreshToken);
 //User Routes (role==='USER')
 router.get('/getself', validateToken, controller.getSelfUser);
 router.patch('/update_self', validateToken, controller.updateSelfUser);
+router.post('/change_password', validateToken, controller.changePassword);
 
 //User Router (role==='ADMIN')
 router.get('/get/:id', validateToken, validateAdmin, controller.getUser);

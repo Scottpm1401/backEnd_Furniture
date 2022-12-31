@@ -6,6 +6,7 @@ import { floor, parseInt } from 'lodash';
 import User, { UserType } from '../models/user';
 import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
 import {
+  ChangePasswordRequest,
   LoginRequest,
   LogoutRequest,
   RefreshTokenRequesst,
@@ -94,6 +95,49 @@ const logout = (req: Request, res: Response, next: NextFunction) => {
       refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
     }
     return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
+const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const _id = getIdFromReq(req);
+    const { password, newPassword }: ChangePasswordRequest = req.body;
+    const user = await User.findById(_id);
+    if (user) {
+      const compare = await bcrypt.compare(password, user.password);
+      if (compare) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedUser = await User.findOneAndUpdate(
+          { _id },
+          { $set: { password: hashedPassword } },
+          { new: true }
+        );
+        if (updatedUser) {
+          const expiredDate = moment().add(7, 'days').format();
+          const token = tokenGen(
+            { _id: user._id.toString(), role: user.role },
+            7
+          );
+          const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
+          refreshTokens.push(refreshToken);
+          return res.status(200).json({
+            accessToken: token,
+            expiredDate,
+            refreshToken,
+          });
+        } else
+          res.status(500).json({ message: 'Failed to change user password' });
+      } else {
+        return res.status(500).json({ message: 'incorrect_password' });
+      }
+    }
+    return res.status(500).json({ message: 'User not found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -254,6 +298,7 @@ export default {
   signup,
   getUser,
   getSelfUser,
+  changePassword,
   updateUser,
   updateSelfUser,
   deleteUser,

@@ -27,6 +27,11 @@ export type UpdateSelfUserRequest = {
   info?: UserInfoType;
 };
 
+export type ChangePasswordRequest = {
+  password: string;
+  newPassword: string;
+};
+
 export type RefreshTokenRequesst = {
   refreshToken: string;
 };
