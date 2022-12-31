@@ -23,7 +23,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     const findUser = await User.find({ email });
 
     if (findUser.length > 0) {
-      return res.status(500).json({ message: 'User already existed' });
+      return res.status(500).json({ message: 'user_already_existed' });
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       const _id = new mongoose.Types.ObjectId();
@@ -78,10 +78,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           .status(200)
           .json({ accessToken: token, expiredDate, refreshToken });
       } else {
-        return res.status(500).json({ message: 'Incorrect Password' });
+        return res.status(500).json({ message: 'incorrect_password' });
       }
     } else {
-      return res.status(500).json({ message: 'Invalid Email or Username' });
+      return res.status(500).json({ message: 'invalid_email_username' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
