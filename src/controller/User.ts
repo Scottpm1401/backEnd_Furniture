@@ -25,31 +25,35 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     if (findUser.length > 0) {
       return res.status(500).json({ message: 'user_already_existed' });
     } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const _id = new mongoose.Types.ObjectId();
-      const user = new User({
-        _id,
-        displayName,
-        email,
-        username,
-        password: hashedPassword,
-        birthday,
-        info: undefined,
-        cart: [],
-        purchase: [],
-      });
-      const savedUser = await user.save();
-      if (savedUser) {
-        const expiredDate = moment().add(7, 'days').format();
-        const token = tokenGen(
-          { _id: _id.toString(), role: savedUser.role },
-          7
-        );
-        const refreshToken = tokenGen({ _id: _id.toString() }, 30);
-        refreshTokens.push(refreshToken);
-        return res
-          .status(201)
-          .json({ accessToken: token, expiredDate, refreshToken });
+      if (findUser[0].username !== username) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const _id = new mongoose.Types.ObjectId();
+        const user = new User({
+          _id,
+          displayName,
+          email,
+          username,
+          password: hashedPassword,
+          birthday,
+          info: undefined,
+          cart: [],
+          purchase: [],
+        });
+        const savedUser = await user.save();
+        if (savedUser) {
+          const expiredDate = moment().add(7, 'days').format();
+          const token = tokenGen(
+            { _id: _id.toString(), role: savedUser.role },
+            7
+          );
+          const refreshToken = tokenGen({ _id: _id.toString() }, 30);
+          refreshTokens.push(refreshToken);
+          return res
+            .status(201)
+            .json({ accessToken: token, expiredDate, refreshToken });
+        } else {
+          return res.status(500).json({ message: 'user_already_existed' });
+        }
       }
     }
   } catch (err) {
@@ -222,15 +226,19 @@ const updateSelfUser = async (
     const { displayName, username, birthday, info }: UpdateSelfUserRequest =
       req.body;
     const findUser = await User.find({ username });
-    if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
-      return res.status(500).json({ message: 'Username already existed' });
+    if (findUser.length > 0) {
+      if (findUser[0]._id.toString() !== _id) {
+        return res.status(500).json({ message: 'Username already existed' });
+      } else {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id },
+          { $set: { displayName, username, birthday, info } },
+          { new: true }
+        );
+        return res.status(200).json(updatedUser);
+      }
     } else {
-      const updatedUser = await User.findOneAndUpdate(
-        { _id },
-        { $set: { displayName, username, birthday, info } },
-        { new: true }
-      );
-      return res.status(200).json(updatedUser);
+      return res.status(500).json({ message: 'User not found' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
