@@ -38,7 +38,7 @@ router.patch(
 router.post('/cart/add', validateToken, cartController.addToCart);
 router.post('/cart/remove', validateToken, cartController.removeFromCart);
 router.post(
-  '/cart/updatequantity',
+  '/cart/update_quantity',
   validateToken,
   cartController.updateProductCartQuantity
 );
