@@ -10,6 +10,7 @@ import {
 import { PurchaseProduct, PurchaseType } from '../models/purchase';
 import moment from 'moment';
 import { stripe } from '..';
+import { floor } from 'lodash';
 
 const checkout = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,7 +21,7 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
     if (user) {
       // Create a PaymentIntent with the order amount and currency.
       const params: Stripe.PaymentIntentCreateParams = {
-        amount: user.cart_total * 100, //api count by cent (100cent = $1)
+        amount: floor(user.cart_total, 2) * 100, //api count by cent (100cent = $1)
         currency: currency ?? 'usd',
         description: `name: ${user.username}, email: ${user.email}`,
         payment_method_types: [paymentMethodType],
