@@ -54,6 +54,8 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         } else {
           return res.status(500).json({ message: 'user_already_existed' });
         }
+      } else {
+        return res.status(500).json({ message: 'username_already_existed' });
       }
     }
   } catch (err) {
@@ -189,7 +191,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     }: UpdateUserRequest = req.body;
     const findUser = await User.find({ username });
     if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
-      return res.status(500).json({ message: 'Username already existed' });
+      return res.status(500).json({ message: 'username_already_existed' });
     } else {
       const hashedPassword = password
         ? await bcrypt.hash(password, 10)
@@ -228,7 +230,7 @@ const updateSelfUser = async (
     const findUser = await User.find({ username });
     if (findUser.length > 0) {
       if (findUser[0]._id.toString() !== _id) {
-        return res.status(500).json({ message: 'Username already existed' });
+        return res.status(500).json({ message: 'username_already_existed' });
       } else {
         const updatedUser = await User.findOneAndUpdate(
           { _id },
