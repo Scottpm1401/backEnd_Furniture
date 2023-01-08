@@ -20,43 +20,37 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { displayName, email, username, password, birthday }: UserType =
       req.body;
-    const findUser = await User.find({ email });
+    const findUserByEmail = await User.find({ email });
+    const findUserByUsername = await User.find({ username });
+    if (findUserByEmail.length > 0)
+      return res.status(500).json({ message: 'email_already_existed' });
+    if (findUserByUsername.length > 0)
+      return res.status(500).json({ message: 'username_already_existed' });
 
-    if (findUser.length > 0) {
-      return res.status(500).json({ message: 'user_already_existed' });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const _id = new mongoose.Types.ObjectId();
+    const user = new User({
+      _id,
+      displayName,
+      email,
+      username,
+      password: hashedPassword,
+      birthday,
+      info: undefined,
+      cart: [],
+      purchase: [],
+    });
+    const savedUser = await user.save();
+    if (savedUser) {
+      const expiredDate = moment().add(7, 'days').format();
+      const token = tokenGen({ _id: _id.toString(), role: savedUser.role }, 7);
+      const refreshToken = tokenGen({ _id: _id.toString() }, 30);
+      refreshTokens.push(refreshToken);
+      return res
+        .status(201)
+        .json({ accessToken: token, expiredDate, refreshToken });
     } else {
-      if (findUser[0].username !== username) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const _id = new mongoose.Types.ObjectId();
-        const user = new User({
-          _id,
-          displayName,
-          email,
-          username,
-          password: hashedPassword,
-          birthday,
-          info: undefined,
-          cart: [],
-          purchase: [],
-        });
-        const savedUser = await user.save();
-        if (savedUser) {
-          const expiredDate = moment().add(7, 'days').format();
-          const token = tokenGen(
-            { _id: _id.toString(), role: savedUser.role },
-            7
-          );
-          const refreshToken = tokenGen({ _id: _id.toString() }, 30);
-          refreshTokens.push(refreshToken);
-          return res
-            .status(201)
-            .json({ accessToken: token, expiredDate, refreshToken });
-        } else {
-          return res.status(500).json({ message: 'user_already_existed' });
-        }
-      } else {
-        return res.status(500).json({ message: 'username_already_existed' });
-      }
+      return res.status(500).json({ message: 'user_already_existed' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
