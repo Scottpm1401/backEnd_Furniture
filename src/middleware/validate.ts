@@ -7,7 +7,7 @@ export const validateToken = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header('Authorization')?.slice(7); // cut Beare
+  const token = req.header('Authorization')?.slice(7); // cut Bearer
 
   if (!token) return res.status(401).send('Access Denied');
 
@@ -24,13 +24,13 @@ export const validateAdmin = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header('Authorization')?.slice(7); // cut Beare
+  const token = req.header('Authorization')?.slice(7); // cut Bearer
   const { role } = parseJwt(token ?? '');
   if (role === 'ADMIN') {
     next();
   } else {
     return res
-      .status(401)
-      .send('You Dont Have Permission To Access This Content');
+      .status(403)
+      .send('You Do Not Have Permission To Access This Content');
   }
 };
