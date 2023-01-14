@@ -7,7 +7,7 @@ import {
   CheckoutResponse,
   ConfirmPaymentRequest,
 } from '../models/api/payment';
-import { PurchaseProduct, PurchaseType } from '../models/purchase';
+import { PurchaseType } from '../models/purchase';
 import moment from 'moment';
 import { stripe } from '..';
 import { floor } from 'lodash';
@@ -90,7 +90,7 @@ const confirmPayment = async (
         { new: true }
       );
       if (newUser) {
-        return res.status(200).json(newUser.purchase);
+        return res.status(200).json({ success: true });
       } else {
         return res.status(500).json({ message: 'Failed To Checkout' });
       }
