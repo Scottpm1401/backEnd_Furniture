@@ -10,6 +10,7 @@ export type PurchaseType = {
   arrive_date?: string;
   billingDetails: BillingDetailsType;
   products: PurchaseProduct[];
+  id?: string;
 };
 
 export type BillingDetailsType = {
@@ -21,6 +22,7 @@ export type BillingDetailsType = {
 
 export type PurchaseProduct = {
   rating?: number;
+  id?: string;
 } & ProductCartType;
 
 /*******************************SCHEMA*****************************/
