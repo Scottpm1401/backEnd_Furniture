@@ -26,7 +26,6 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
         description: `name: ${user.username}, email: ${user.email}`,
         payment_method_types: [paymentMethodType],
       };
-
       // If this is for an ACSS payment, we add payment_method_options to create
       // the Mandate.
       if (paymentMethodType === 'acss_debit') {
@@ -69,13 +68,14 @@ const confirmPayment = async (
 ) => {
   try {
     const user_id = getIdFromReq(req);
-    const { card_brand, billing_details }: ConfirmPaymentRequest = req.body;
+    const { payment_method, billing_details }: ConfirmPaymentRequest = req.body;
     const user = await User.findById(user_id);
+    const payment = await stripe.paymentMethods.retrieve(payment_method);
     if (user) {
       const purchase: PurchaseType = {
         status: 'PACKAGE',
         total_bill: user.cart_total,
-        payment_method: card_brand,
+        payment_method: payment.card?.brand || '',
         package_date: moment().format(),
         billingDetails: billing_details,
         products: user.cart,
@@ -90,7 +90,7 @@ const confirmPayment = async (
         { new: true }
       );
       if (newUser) {
-        return res.status(200).json({ success: true });
+        return res.status(200).json(newUser.purchase);
       } else {
         return res.status(500).json({ message: 'Failed To Checkout' });
       }
