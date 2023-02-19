@@ -8,7 +8,6 @@ import Product, {
 } from '../models/product';
 import User from '../models/user';
 import { getIdFromReq } from '../utils/token';
-import { isEmpty } from 'lodash';
 
 const getAllProducts = async (
   req: Request,

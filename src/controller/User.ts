@@ -1,10 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { NextFunction, Request, Response } from 'express';
+import { parseInt } from 'lodash';
 import moment from 'moment';
-import { floor, parseInt } from 'lodash';
-import User, { UserType } from '../models/user';
-import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
+import mongoose, { FilterQuery } from 'mongoose';
 import {
   ChangePasswordRequest,
   LoginRequest,
@@ -13,6 +11,8 @@ import {
   UpdateSelfUserRequest,
   UpdateUserRequest,
 } from '../models/api/user';
+import User, { UserType, UserTypeModel } from '../models/user';
+import { getIdFromReq, parseJwt, tokenGen } from '../utils/token';
 
 let refreshTokens: string[] = [];
 
@@ -254,8 +254,16 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { offset, limit } = req.query;
-    const users = await User.find()
+    const { offset, limit, search } = req.query;
+
+    const searchFilter = search
+      ? { $text: { $search: search.toString() } }
+      : {};
+    const filter: FilterQuery<UserTypeModel> = {
+      ...searchFilter,
+    };
+
+    const users = await User.find(filter)
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
     return res.status(200).json(users);

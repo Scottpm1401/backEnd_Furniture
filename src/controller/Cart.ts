@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
+import { ProductCartType } from '../models/cart';
+import Product from '../models/product';
 import User from '../models/user';
 import { getIdFromReq } from '../utils/token';
-import Product from '../models/product';
-import { ProductCartType } from '../models/cart';
 
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
