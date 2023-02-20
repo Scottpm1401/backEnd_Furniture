@@ -3,11 +3,12 @@ import { NextFunction, Request, Response } from 'express';
 import { parseInt } from 'lodash';
 import moment from 'moment';
 import mongoose, { FilterQuery } from 'mongoose';
+import { CMSList } from '../models/api/cms';
 import {
   ChangePasswordRequest,
   LoginRequest,
   LogoutRequest,
-  RefreshTokenRequesst,
+  RefreshTokenRequest,
   UpdateSelfUserRequest,
   UpdateUserRequest,
 } from '../models/api/user';
@@ -266,7 +267,10 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
     const users = await User.find(filter)
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
-    return res.status(200).json(users);
+
+    const total = await User.find().count();
+
+    return res.status(200).json({ data: users, total } as CMSList<UserType[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -278,7 +282,7 @@ const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken }: RefreshTokenRequesst = req.body;
+    const { refreshToken }: RefreshTokenRequest = req.body;
     if (
       refreshToken &&
       refreshTokens.findIndex((token) => token === refreshToken) > -1
