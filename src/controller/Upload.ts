@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import cloudinary from '../utils/cloudinary';
 

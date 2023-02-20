@@ -32,6 +32,6 @@ export type ChangePasswordRequest = {
   newPassword: string;
 };
 
-export type RefreshTokenRequesst = {
+export type RefreshTokenRequest = {
   refreshToken: string;
 };

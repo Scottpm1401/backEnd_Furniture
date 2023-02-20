@@ -1,18 +1,19 @@
-import { NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import { NextFunction, Request, Response } from 'express';
+import { parseInt } from 'lodash';
 import moment from 'moment';
-import { floor, parseInt } from 'lodash';
-import User, { UserType } from '../models/user';
-import { tokenGen, getIdFromReq, parseJwt } from '../utils/token';
+import mongoose, { FilterQuery } from 'mongoose';
+import { CMSList } from '../models/api/cms';
 import {
   ChangePasswordRequest,
   LoginRequest,
   LogoutRequest,
-  RefreshTokenRequesst,
+  RefreshTokenRequest,
   UpdateSelfUserRequest,
   UpdateUserRequest,
 } from '../models/api/user';
+import User, { UserType, UserTypeModel } from '../models/user';
+import { getIdFromReq, parseJwt, tokenGen } from '../utils/token';
 
 let refreshTokens: string[] = [];
 
@@ -254,11 +255,22 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { offset, limit } = req.query;
-    const users = await User.find()
+    const { offset, limit, search } = req.query;
+
+    const searchFilter = search
+      ? { $text: { $search: search.toString() } }
+      : {};
+    const filter: FilterQuery<UserTypeModel> = {
+      ...searchFilter,
+    };
+
+    const users = await User.find(filter)
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
-    return res.status(200).json(users);
+
+    const total = await User.find().count();
+
+    return res.status(200).json({ data: users, total } as CMSList<UserType[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -270,7 +282,7 @@ const refreshToken = async (
   next: NextFunction
 ) => {
   try {
-    const { refreshToken }: RefreshTokenRequesst = req.body;
+    const { refreshToken }: RefreshTokenRequest = req.body;
     if (
       refreshToken &&
       refreshTokens.findIndex((token) => token === refreshToken) > -1

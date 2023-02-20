@@ -13,5 +13,5 @@ export type CheckoutResponse = {
 
 export type ConfirmPaymentRequest = {
   billing_details: BillingDetailsType;
-  card_brand: string;
+  payment_method: string;
 };
