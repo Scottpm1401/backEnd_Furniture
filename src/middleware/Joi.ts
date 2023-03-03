@@ -52,6 +52,7 @@ export const Schemas = {
       password: Joi.string().min(6).max(30),
       birthday: Joi.string(),
       displayName: Joi.string(),
+      role: Joi.string().valid('USER', 'ADMIN'),
       info: Joi.object<UserInfoType>({
         first_name: Joi.string().max(30),
         last_name: Joi.string().max(30),

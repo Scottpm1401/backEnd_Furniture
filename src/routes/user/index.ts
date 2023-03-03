@@ -26,7 +26,7 @@ router.delete(
   validateAdmin,
   controller.deleteUser
 );
-router.patch(
+router.post(
   '/update/:id',
   validateToken,
   validateAdmin,
