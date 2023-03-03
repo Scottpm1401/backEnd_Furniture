@@ -1,16 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
-import User from '../models/user';
-import { getIdFromReq } from '../utils/token';
+import { NextFunction, Request, Response } from 'express';
+import { floor } from 'lodash';
+import moment from 'moment';
 import Stripe from 'stripe';
+import { stripe } from '..';
 import {
   CheckoutRequest,
   CheckoutResponse,
   ConfirmPaymentRequest,
 } from '../models/api/payment';
-import { PurchaseType } from '../models/purchase';
-import moment from 'moment';
-import { stripe } from '..';
-import { floor } from 'lodash';
+import Purchase from '../models/purchase';
+import User from '../models/user';
+import { getIdFromReq } from '../utils/token';
 
 const checkout = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -72,25 +72,20 @@ const confirmPayment = async (
     const user = await User.findById(user_id);
     const payment = await stripe.paymentMethods.retrieve(payment_method);
     if (user) {
-      const purchase: PurchaseType = {
+      const purchase = new Purchase({
+        user_id,
         status: 'PACKAGE',
         total_bill: user.cart_total,
         payment_method: payment.card?.brand || '',
         package_date: moment().format(),
         billingDetails: billing_details,
         products: user.cart,
-      };
-      const newUser = await User.findOneAndUpdate(
-        { _id: user_id },
-        {
-          $addToSet: {
-            purchase,
-          },
-        },
-        { new: true }
-      );
-      if (newUser) {
-        return res.status(200).json(newUser.purchase);
+      });
+
+      const savedPurchase = await purchase.save();
+      if (savedPurchase) {
+        const userOrdered = await Purchase.find({ user_id });
+        return res.status(200).json(userOrdered);
       } else {
         return res.status(500).json({ message: 'Failed To Checkout' });
       }

@@ -1,6 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
 import { ProductCart, ProductCartType } from '../cart';
-import { Purchase, PurchaseType } from '../purchase';
 
 /*********************TYPE & INTERFACE*****************************/
 
@@ -28,6 +27,7 @@ export type AddressType = {
 };
 
 export type UserType = {
+  _id: string;
   displayName?: string;
   email: string;
   username: string;
@@ -37,7 +37,6 @@ export type UserType = {
   info: UserInfoType;
   cart_total: number;
   cart: ProductCartType[];
-  purchase: PurchaseType[];
 };
 
 export type UserTypeModel = {} & UserType & Document;
@@ -71,7 +70,6 @@ const userSchema = new Schema({
   info: UserInfo,
   cart_total: { type: Number, default: 0 },
   cart: [ProductCart],
-  purchase: [Purchase],
 });
 
 export default model<UserTypeModel>('User', userSchema);

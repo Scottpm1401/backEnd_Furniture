@@ -12,6 +12,7 @@ import {
   UpdateSelfUserRequest,
   UpdateUserRequest,
 } from '../models/api/user';
+
 import User, { UserType, UserTypeModel } from '../models/user';
 import { getIdFromReq, parseJwt, tokenGen } from '../utils/token';
 
@@ -39,7 +40,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       birthday,
       info: undefined,
       cart: [],
-      purchase: [],
     });
     const savedUser = await user.save();
     if (savedUser) {
@@ -265,7 +265,7 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
       .limit(parseInt(limit?.toString() ?? '0'))
       .select('-password');
 
-    const total = await User.find().count();
+    const total = await User.find(filter).count();
 
     return res.status(200).json({ data: users, total } as CMSList<UserType[]>);
   } catch (err) {

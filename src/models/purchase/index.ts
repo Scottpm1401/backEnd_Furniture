@@ -1,5 +1,6 @@
+import { model, Schema } from 'mongoose';
 import { ProductCartType } from '../cart';
-import { Address, AddressType } from '../user';
+import { AddressType } from '../user';
 
 /*********************TYPE & INTERFACE*****************************/
 export type PurchaseType = {
@@ -11,6 +12,9 @@ export type PurchaseType = {
   billingDetails: BillingDetailsType;
   products: PurchaseProduct[];
   id?: string;
+  user_id: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type BillingDetailsType = {
@@ -24,6 +28,8 @@ export type PurchaseProduct = {
   rating?: number;
   id?: string;
 } & ProductCartType;
+
+export type PurchaseTypeModel = {} & PurchaseType & Document;
 
 /*******************************SCHEMA*****************************/
 
@@ -50,16 +56,22 @@ export const PurchaseProduct = {
   rating: Number,
 };
 
-export const Purchase = {
-  status: {
-    type: String,
-    enum: ['PACKAGE', 'SHIPPING', 'DELIVERED'],
-    default: 'PACKAGE',
+const purchaseSchema = new Schema(
+  {
+    status: {
+      type: String,
+      enum: ['PACKAGE', 'SHIPPING', 'DELIVERED'],
+      default: 'PACKAGE',
+    },
+    user_id: { type: String, required: true },
+    billingDetails: BillingDetails,
+    products: [PurchaseProduct],
+    total_bill: { type: Number, required: true },
+    payment_method: { type: String, required: true },
+    package_date: { type: String, required: true },
+    arrive_date: String,
   },
-  billingDetails: BillingDetails,
-  products: [PurchaseProduct],
-  total_bill: { type: Number, required: true },
-  payment_method: { type: String, required: true },
-  package_date: { type: String, required: true },
-  arrive_date: String,
-};
+  { timestamps: true }
+);
+
+export default model<PurchaseTypeModel>('Purchase', purchaseSchema);
