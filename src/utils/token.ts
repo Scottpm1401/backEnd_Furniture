@@ -12,7 +12,7 @@ export const parseJwt = (token: string) => {
 };
 
 export const getIdFromReq = (req: Request) => {
-  const token = req.header('Authorization')?.slice(7); // cut Beare
+  const token = req.header('Authorization')?.slice(7); // cut Bearer
   const _id = parseJwt(token ?? '')._id;
 
   return _id as string;

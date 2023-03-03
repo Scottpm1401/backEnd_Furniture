@@ -147,12 +147,9 @@ const changePassword = async (
 const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = getIdFromReq(req);
-    const user = await User.findById(_id);
-    if (user) {
-      return res.status(200).json(user);
-    } else {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const user = await User.findById(_id).select('-password');
+    if (user) return res.status(200).json(user);
+    return res.status(404).json({ message: 'User not found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -161,12 +158,9 @@ const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = req.params.id;
-    const user = await User.findById(_id);
-    if (user) {
-      return res.status(200).json(user);
-    } else {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const user = await User.findById(_id).select('-password');
+    if (user) return res.status(200).json(user);
+    return res.status(404).json({ message: 'User not found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -184,30 +178,32 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       email,
       password,
     }: UpdateUserRequest = req.body;
-    const findUser = await User.find({ username });
-    if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
+    const findUserByUsername = await User.find({ username });
+    const findUserByEmail = await User.find({ email });
+    if (findUserByEmail[0]._id.toString() !== _id)
+      return res.status(500).json({ message: 'email_already_existed' });
+    if (findUserByUsername[0]._id.toString() !== _id)
       return res.status(500).json({ message: 'username_already_existed' });
-    } else {
-      const hashedPassword = password
-        ? await bcrypt.hash(password, 10)
-        : undefined;
-      const updatedUser = await User.findOneAndUpdate(
-        { _id },
-        {
-          $set: {
-            displayName,
-            username,
-            birthday,
-            info,
-            role,
-            email,
-            password: hashedPassword,
-          },
+
+    const hashedPassword = password
+      ? await bcrypt.hash(password, 10)
+      : undefined;
+    const updatedUser = await User.findOneAndUpdate(
+      { _id },
+      {
+        $set: {
+          displayName,
+          username,
+          birthday,
+          info,
+          role,
+          email,
+          password: hashedPassword,
         },
-        { new: true }
-      );
-      return res.status(200).json(updatedUser);
-    }
+      },
+      { new: true }
+    ).select('-password');
+    return res.status(200).json(updatedUser);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -231,7 +227,7 @@ const updateSelfUser = async (
           { _id },
           { $set: { displayName, username, birthday, info } },
           { new: true }
-        );
+        ).select('-password');
         return res.status(200).json(updatedUser);
       }
     } else {
@@ -266,7 +262,8 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
 
     const users = await User.find(filter)
       .skip(parseInt(offset?.toString() ?? '0'))
-      .limit(parseInt(limit?.toString() ?? '0'));
+      .limit(parseInt(limit?.toString() ?? '0'))
+      .select('-password');
 
     const total = await User.find().count();
 
