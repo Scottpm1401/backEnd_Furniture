@@ -4,7 +4,7 @@ import { AddressType } from '../user';
 
 /*********************TYPE & INTERFACE*****************************/
 export type PurchaseType = {
-  status: 'PACKAGE' | 'SHIPPING' | 'DELIVERED';
+  status: PurchaseStatus;
   total_bill: number;
   payment_method: string;
   package_date: string;
@@ -16,6 +16,12 @@ export type PurchaseType = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export enum PurchaseStatus {
+  package = 'PACKAGE',
+  shipping = 'SHIPPING',
+  delivered = 'DELIVERED',
+}
 
 export type BillingDetailsType = {
   name: string;
