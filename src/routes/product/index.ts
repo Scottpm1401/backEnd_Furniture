@@ -8,6 +8,12 @@ const router = Router();
 router.get('/all', controller.getAllProducts);
 router.get('/get/:id', controller.getProduct);
 router.get('/featured', controller.getFeaturedProducts);
+router.get(
+  '/cms_all',
+  validateToken,
+  validateAdmin,
+  controller.getCmsAllProducts
+);
 router.post('/create', validateToken, validateAdmin, controller.createProduct);
 router.patch(
   '/update/:id',

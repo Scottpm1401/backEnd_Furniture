@@ -12,12 +12,14 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
       const product = await Product.findById(product_id);
       if (product && product.colors.findIndex((item) => item === color) > -1) {
         const newProductCart: ProductCartType = {
-          product_id: product_id,
+          product_id,
           color,
           img: product.img,
           title: product.title,
           price: product.price,
           quantity,
+          brand: product.brand,
+          category: product.category,
         };
         const user = await User.findOneAndUpdate(
           { _id },

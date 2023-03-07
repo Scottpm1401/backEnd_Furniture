@@ -39,7 +39,9 @@ const getSelfOrdered = async (
 ) => {
   try {
     const _id = getIdFromReq(req);
-    const purchase = await Purchase.find({ user_id: _id });
+    const purchase = await Purchase.find({ user_id: _id }).sort({
+      createdAt: -1,
+    });
     if (purchase) return res.status(200).json(purchase);
     return res.status(404).json({ message: 'Purchase not found' });
   } catch (err) {

@@ -59,6 +59,8 @@ export const PurchaseProduct = {
   price: { type: Number, required: true },
   color: { type: String, required: true },
   quantity: { type: Number, required: true },
+  brand: { type: String, required: true },
+  category: { type: String, required: true },
   rating: Number,
 };
 
