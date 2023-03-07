@@ -6,6 +6,8 @@ export type ProductCartType = {
   price: number;
   color: string;
   quantity: number;
+  brand: string;
+  category: string;
 };
 
 /*******************************SCHEMA*****************************/
@@ -16,4 +18,6 @@ export const ProductCart = {
   price: { type: Number, required: true },
   color: { type: String, required: true },
   quantity: { type: Number, required: true },
+  brand: { type: String, required: true },
+  category: { type: String, required: true },
 };

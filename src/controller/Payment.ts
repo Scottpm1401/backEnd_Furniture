@@ -21,7 +21,7 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
     if (user) {
       // Create a PaymentIntent with the order amount and currency.
       const params: Stripe.PaymentIntentCreateParams = {
-        amount: floor(user.cart_total, 2) * 100, //api count by cent (100cent = $1)
+        amount: floor(user.cart_total * 100, 2), //api count by cent (100cent = $1)
         currency: currency ?? 'usd',
         description: `name: ${user.username}, email: ${user.email}`,
         payment_method_types: [paymentMethodType],

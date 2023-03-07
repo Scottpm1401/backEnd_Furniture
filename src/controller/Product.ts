@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
+import { CMSList } from '../models/api/cms';
 import Product, {
   ProductSort,
   ProductType,
@@ -281,6 +282,32 @@ const ratingProduct = async (
   }
 };
 
+const getCmsAllProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { offset, limit, search } = req.query;
+    const searchFilter = search
+      ? { $text: { $search: search.toString() } }
+      : {};
+    const filter: FilterQuery<ProductTypeModel> = {
+      ...searchFilter,
+    };
+
+    const products = await Product.find(filter)
+      .skip(parseInt(offset?.toString() ?? '0'))
+      .limit(parseInt(limit?.toString() ?? '0'));
+    const total = await Product.find(filter).count();
+    return res
+      .status(200)
+      .json({ data: products, total } as CMSList<ProductType[]>);
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
 export default {
   getFeaturedProducts,
   getAllProducts,
@@ -289,4 +316,5 @@ export default {
   updateProduct,
   deleteProduct,
   ratingProduct,
+  getCmsAllProducts,
 };
