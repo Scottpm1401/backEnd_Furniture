@@ -60,16 +60,19 @@ export const UserInfo = {
   address: Address,
 };
 
-const userSchema = new Schema({
-  displayName: String,
-  email: { type: String, required: true },
-  username: { type: String, required: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['USER', 'ADMIN'], default: 'USER' },
-  birthday: { type: String, required: true },
-  info: UserInfo,
-  cart_total: { type: Number, default: 0 },
-  cart: [ProductCart],
-});
+const userSchema = new Schema(
+  {
+    displayName: String,
+    email: { type: String, required: true },
+    username: { type: String, required: true },
+    password: { type: String, required: true },
+    role: { type: String, enum: ['USER', 'ADMIN'], default: 'USER' },
+    birthday: { type: String, required: true },
+    info: UserInfo,
+    cart_total: { type: Number, default: 0 },
+    cart: [ProductCart],
+  },
+  { timestamps: true }
+);
 
 export default model<UserTypeModel>('User', userSchema);

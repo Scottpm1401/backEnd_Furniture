@@ -8,7 +8,7 @@ const getSignature = async (
   next: NextFunction
 ) => {
   try {
-    const { folder, upload_preset, public_id } = req.body;
+    const { folder, public_id } = req.body;
     const timestamp = moment().unix();
 
     const api_secret = cloudinary.config().api_secret || '';
@@ -17,7 +17,6 @@ const getSignature = async (
       {
         timestamp,
         folder,
-        upload_preset,
         public_id,
       },
       api_secret
