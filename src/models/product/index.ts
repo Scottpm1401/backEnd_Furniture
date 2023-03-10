@@ -52,19 +52,22 @@ export const Review = {
   phone: String,
 };
 
-const productSchema = new Schema({
-  img: { type: String, required: true },
-  gallery: { type: [String], default: [] },
-  title: { type: String, required: true },
-  description: String,
-  category: { type: String, required: true },
-  brand: { type: String, required: true },
-  rating: Rating,
-  review: [Review],
-  price: { type: Number, required: true },
-  sku: { type: String, required: true },
-  storage_quantity: { type: Number, default: 0 },
-  colors: { type: [String], default: [] },
-});
+const productSchema = new Schema(
+  {
+    img: { type: String, required: true },
+    gallery: { type: [String], default: [] },
+    title: { type: String, required: true },
+    description: String,
+    category: { type: String, required: true },
+    brand: { type: String, required: true },
+    rating: Rating,
+    review: [Review],
+    price: { type: Number, required: true },
+    sku: { type: String, required: true },
+    storage_quantity: { type: Number, default: 0 },
+    colors: { type: [String], default: [] },
+  },
+  { timestamps: true }
+);
 
 export default model<ProductTypeModel>('Product', productSchema);
