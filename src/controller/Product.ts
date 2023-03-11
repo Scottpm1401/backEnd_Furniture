@@ -114,8 +114,6 @@ const createProduct = async (
       sku,
       storage_quantity,
       colors,
-      review,
-      rating,
     }: ProductType = req.body;
     const _id = new mongoose.Types.ObjectId();
     const product = new Product({
@@ -130,8 +128,6 @@ const createProduct = async (
       sku,
       storage_quantity,
       colors,
-      review,
-      rating,
     });
     const savedProduct = await product.save();
     if (savedProduct) {
