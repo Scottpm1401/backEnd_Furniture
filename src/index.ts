@@ -9,14 +9,21 @@ import uploadRouter from './routes/upload';
 import orderedRouter from './routes/ordered';
 import { config } from 'dotenv';
 import cors from 'cors';
+import { createClient } from 'redis';
 
 const app = express();
 config();
-
+const client = createClient({
+  url: process.env.REDIS,
+});
 /** Connect to Mongo */
 mongoose
   .connect(process.env.MONGO_DB || '', { retryWrites: true, w: 'majority' })
   .then(() => {
+    client
+      .connect()
+      .then(() => Logging.info('Redis connected successfully.'))
+      .catch((error) => Logging.error(error));
     Logging.info('Mongo connected successfully.');
     StartServer();
   })
@@ -83,6 +90,21 @@ const StartServer = () => {
     }
 
     next();
+  });
+
+  /** Redis Cache */
+  app.use(async (req, res, next) => {
+    const key = req.originalUrl;
+    try {
+      const data = await client.get(key);
+      if (data !== null) {
+        res.send(data);
+      } else {
+        next();
+      }
+    } catch (err) {
+      throw err;
+    }
   });
 
   /** Routes */

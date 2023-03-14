@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^6.6.5",
+    "redis": "^4.6.5",
     "stripe": "^11.3.0"
   },
   "devDependencies": {
