@@ -118,11 +118,12 @@ const productCheck = async (
 ) => {
   try {
     const { product_id } = req.params;
+    const quantity: number = req.body.quantity;
     const product = await Product.findById(product_id);
 
     if (!product) return res.status(404).json({ message: 'Product Not Found' });
 
-    if (product.storage_quantity < 1)
+    if (product.storage_quantity < quantity)
       return res.status(500).json({ message: 'out_of_stock' });
     return res.status(200).json({ success: true });
   } catch (err) {
