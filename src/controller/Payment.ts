@@ -8,6 +8,7 @@ import {
   CheckoutResponse,
   ConfirmPaymentRequest,
 } from '../models/api/payment';
+import Product from '../models/product';
 import Purchase from '../models/purchase';
 import User from '../models/user';
 import { getIdFromReq } from '../utils/token';
@@ -85,6 +86,19 @@ const confirmPayment = async (
       const savedPurchase = await purchase.save();
       if (savedPurchase) {
         const userOrdered = await Purchase.find({ user_id });
+        const updatedProductsReq = user.cart.map(async (item) => {
+          const updatedProduct = await Product.findOneAndUpdate(
+            { _id: item.product_id },
+            {
+              $inc: {
+                storage_quantity: -1,
+              },
+            },
+            { new: true }
+          );
+          return updatedProduct;
+        });
+        await Promise.all(updatedProductsReq);
         return res.status(200).json(userOrdered);
       } else {
         return res.status(500).json({ message: 'Failed To Checkout' });
@@ -97,4 +111,23 @@ const confirmPayment = async (
   }
 };
 
-export default { checkout, confirmPayment };
+const productCheck = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { product_id } = req.params;
+    const product = await Product.findById(product_id);
+
+    if (!product) return res.status(404).json({ message: 'Product Not Found' });
+
+    if (product.storage_quantity < 1)
+      return res.status(500).json({ message: 'out_of_stock' });
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
+export default { checkout, confirmPayment, productCheck };

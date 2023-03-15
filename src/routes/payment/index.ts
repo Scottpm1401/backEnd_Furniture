@@ -1,11 +1,11 @@
 import { Router } from 'express';
 
 import controller from '../../controller/Payment';
-import { Schemas, ValidateJoi } from '../../middleware/Joi';
-import { validateAdmin, validateToken } from '../../middleware/validate';
+import { validateToken } from '../../middleware/validate';
 const router = Router();
 
 router.post('/checkout', validateToken, controller.checkout);
 router.post('/confirm', validateToken, controller.confirmPayment);
+router.get('/check/:product_id', validateToken, controller.productCheck);
 
 export default router;
