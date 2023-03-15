@@ -6,6 +6,6 @@ const router = Router();
 
 router.post('/checkout', validateToken, controller.checkout);
 router.post('/confirm', validateToken, controller.confirmPayment);
-router.get('/check/:product_id', validateToken, controller.productCheck);
+router.post('/check/:product_id', validateToken, controller.productCheck);
 
 export default router;
