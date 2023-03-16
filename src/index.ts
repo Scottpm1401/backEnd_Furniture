@@ -59,7 +59,7 @@ const StartServer = () => {
   app.use(express.json());
   app.use(
     cors({
-      origin: process.env.FRONT_END_URL,
+      origin: [process.env.FRONT_END_URL || '', 'http://localhost:3000'],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
       credentials: true,
       allowedHeaders: [
