@@ -79,7 +79,7 @@ const getFeaturedProducts = async (
       .limit(parseInt(limit?.toString() ?? '3'));
     return res.status(200).json(featuredProducts);
   } catch (err) {
-    return res.status(500).json({ messsage: err });
+    return res.status(500).json({ message: err });
   }
 };
 
