@@ -7,6 +7,7 @@ import productRouter from './routes/product';
 import paymentRouter from './routes/payment';
 import uploadRouter from './routes/upload';
 import orderedRouter from './routes/ordered';
+import analysisRouter from './routes/analysis';
 import { config } from 'dotenv';
 import cors from 'cors';
 import { createClient } from 'redis';
@@ -113,6 +114,7 @@ const StartServer = () => {
   app.use('/payment', paymentRouter);
   app.use('/upload', uploadRouter);
   app.use('/ordered', orderedRouter);
+  app.use('/analysis', analysisRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
