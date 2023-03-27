@@ -15,7 +15,7 @@ router.get(
   '/products_purchase/:month',
   validateToken,
   validateAdmin,
-  controller.getMostBoughtProduct
+  controller.getBoughtProduct
 );
 
 export default router;

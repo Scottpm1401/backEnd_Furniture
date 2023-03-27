@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { Revenue, RevenuePerMonth } from '../models/analysis';
+import { BoughtProduct, Revenue, RevenuePerMonth } from '../models/analysis';
 import Purchase from '../models/purchase';
 import { getIdFromReq } from '../utils/token';
 
@@ -66,31 +66,54 @@ const getRevenuePerMonth = async (
   }
 };
 
-const getMostBoughtProduct = async (
+const getBoughtProduct = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const month = parseInt(req.params.month);
-    const startDate = moment()
-      .month(month - 1)
+    const month = req.params.month;
+
+    const currentYear = moment().year();
+    const startDate = moment(month, 'MM')
+      .year(currentYear)
       .startOf('month')
       .toDate();
-    const endDate = moment()
-      .month(month - 1)
+    const endDate = moment(month, 'MM')
+      .year(currentYear)
       .endOf('month')
       .toDate();
+
     const purchases = await Purchase.find({
       createdAt: {
         $gte: startDate,
         $lt: endDate,
       },
-    }).populate('products.product_id');
-    return res.json(purchases);
+    });
+
+    const boughtProducts: BoughtProduct[] = [];
+
+    purchases.forEach((purchase) => {
+      purchase.products.forEach((product) => {
+        const index = boughtProducts.findIndex(
+          (item) => item.product_id === product.product_id
+        );
+        if (index !== -1) {
+          boughtProducts[index].num_of_purchase += product.quantity;
+        } else {
+          boughtProducts.push({
+            product_id: product.product_id,
+            title: product.title,
+            num_of_purchase: product.quantity,
+          });
+        }
+      });
+    });
+
+    res.status(200).json(boughtProducts);
   } catch (err) {
     res.status(500).json({ message: err });
   }
 };
 
-export default { getRevenuePerMonth, getMostBoughtProduct };
+export default { getRevenuePerMonth, getBoughtProduct };
