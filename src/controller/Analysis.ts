@@ -1,8 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { BoughtProduct, Revenue, RevenuePerMonth } from '../models/analysis';
+import {
+  BoughtProduct,
+  Revenue,
+  RevenuePerMonth,
+  TopUser,
+} from '../models/analysis';
 import Purchase from '../models/purchase';
-import { getIdFromReq } from '../utils/token';
 
 const getRevenuePerMonth = async (
   req: Request,
@@ -116,4 +120,45 @@ const getBoughtProduct = async (
   }
 };
 
-export default { getRevenuePerMonth, getBoughtProduct };
+const getTop10Users = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const month = req.params.month;
+
+  const currentYear = moment().year();
+  const startDate = moment(month, 'MM')
+    .year(currentYear)
+    .startOf('month')
+    .toDate();
+  const endDate = moment(month, 'MM').year(currentYear).endOf('month').toDate();
+
+  try {
+    const topUsers: TopUser[] = await Purchase.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: '$user_id',
+          name: { $first: '$billingDetails.name' },
+          email: { $first: '$billingDetails.email' },
+          phone: { $first: '$billingDetails.phone' },
+          paid: { $sum: '$total_bill' },
+          bought_products_quantity: { $sum: { $size: '$products' } },
+        },
+      },
+      { $sort: { paid: -1 } },
+      { $limit: 10 },
+    ]);
+
+    res.json(topUsers);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
+export default { getRevenuePerMonth, getBoughtProduct, getTop10Users };

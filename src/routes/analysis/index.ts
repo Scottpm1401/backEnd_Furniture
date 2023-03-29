@@ -18,4 +18,11 @@ router.get(
   controller.getBoughtProduct
 );
 
+router.get(
+  '/top_10_users/:month',
+  validateToken,
+  validateAdmin,
+  controller.getTop10Users
+);
+
 export default router;
