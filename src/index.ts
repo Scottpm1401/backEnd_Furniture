@@ -3,18 +3,18 @@ import http from 'http';
 import mongoose from 'mongoose';
 import Logging from './library/Logging';
 
+import cors from 'cors';
+import { config } from 'dotenv';
+import { createClient } from 'redis';
 import {
   analysisRouter,
-  customizeRouter,
   orderedRouter,
   paymentRouter,
   productRouter,
+  templateRouter,
   uploadRouter,
   userRouter,
 } from './routes';
-import { config } from 'dotenv';
-import cors from 'cors';
-import { createClient } from 'redis';
 
 const app = express();
 config();
@@ -47,7 +47,7 @@ const StartServer = () => {
   app.use((req, res, next) => {
     /** Log the req */
     Logging.info(
-      `Incomming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
+      `Incoming - METHOD: [${req.method}] - URL: [${req.url}] - IP: [${req.socket.remoteAddress}]`
     );
 
     res.on('finish', () => {
@@ -119,11 +119,11 @@ const StartServer = () => {
   app.use('/upload', uploadRouter);
   app.use('/ordered', orderedRouter);
   app.use('/analysis', analysisRouter);
-  app.use('/customize', customizeRouter);
+  app.use('/template', templateRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
-    res.status(200).json({ messsage: 'pong' })
+    res.status(200).json({ message: 'pong' })
   );
 
   /** Error handling */
