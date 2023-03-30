@@ -3,6 +3,7 @@ import {
   PurchaseProduct,
   PurchaseStatus,
 } from '../../purchase';
+import { TemplateType } from '../../template';
 
 export type CMSList<T> = {
   total: number;
@@ -17,3 +18,9 @@ export type UpdateOrderedRequest = {
   products?: PurchaseProduct[];
   billingDetails?: BillingDetailsType;
 };
+
+export type CreateTemplateRequest = Omit<TemplateType, '_id'>;
+
+export type UpdateTemplateRequest = Partial<
+  Omit<TemplateType, '_id' | 'active'>
+>;

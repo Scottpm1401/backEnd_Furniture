@@ -5,3 +5,4 @@ export { default as paymentController } from './Payment';
 export { default as productController } from './Product';
 export { default as uploadController } from './Upload';
 export { default as userController } from './User';
+export { default as templateController } from './Template';
