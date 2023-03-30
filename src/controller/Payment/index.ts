@@ -2,16 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import { floor } from 'lodash';
 import moment from 'moment';
 import Stripe from 'stripe';
-import { stripe } from '..';
+import { stripe } from '../..';
 import {
   CheckoutRequest,
   CheckoutResponse,
   ConfirmPaymentRequest,
-} from '../models/api/payment';
-import Product from '../models/product';
-import Purchase from '../models/purchase';
-import User from '../models/user';
-import { getIdFromReq } from '../utils/token';
+} from '../../models/api/payment';
+import Product from '../../models/product';
+import Purchase from '../../models/purchase';
+import User from '../../models/user';
+import { getIdFromReq } from '../../utils/token';
 
 const checkout = async (req: Request, res: Response, next: NextFunction) => {
   try {

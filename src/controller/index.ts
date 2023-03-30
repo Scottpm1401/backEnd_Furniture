@@ -1,0 +1,7 @@
+export { default as analysisController } from './Analysis';
+export { default as cartController } from './Cart';
+export { default as orderedController } from './Ordered';
+export { default as paymentController } from './Payment';
+export { default as productController } from './Product';
+export { default as uploadController } from './Upload';
+export { default as userController } from './User';

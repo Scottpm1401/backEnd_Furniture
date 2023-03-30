@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
-import { CMSList } from '../models/api/cms';
+import { CMSList } from '../../models/api/cms';
 import Product, {
   ProductSort,
   ProductType,
   ProductTypeModel,
   RatingType,
-} from '../models/product';
-import Purchase from '../models/purchase';
-import User from '../models/user';
-import { getIdFromReq } from '../utils/token';
+} from '../../models/product';
+import Purchase from '../../models/purchase';
+import User from '../../models/user';
+import { getIdFromReq } from '../../utils/token';
 
 const getAllProducts = async (
   req: Request,
