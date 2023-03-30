@@ -2,12 +2,16 @@ import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import Logging from './library/Logging';
-import userRouter from './routes/user';
-import productRouter from './routes/product';
-import paymentRouter from './routes/payment';
-import uploadRouter from './routes/upload';
-import orderedRouter from './routes/ordered';
-import analysisRouter from './routes/analysis';
+
+import {
+  analysisRouter,
+  customizeRouter,
+  orderedRouter,
+  paymentRouter,
+  productRouter,
+  uploadRouter,
+  userRouter,
+} from './routes';
 import { config } from 'dotenv';
 import cors from 'cors';
 import { createClient } from 'redis';
@@ -115,6 +119,7 @@ const StartServer = () => {
   app.use('/upload', uploadRouter);
   app.use('/ordered', orderedRouter);
   app.use('/analysis', analysisRouter);
+  app.use('/customize', customizeRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>

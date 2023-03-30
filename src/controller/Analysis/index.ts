@@ -5,8 +5,8 @@ import {
   Revenue,
   RevenuePerMonth,
   TopUser,
-} from '../models/analysis';
-import Purchase from '../models/purchase';
+} from '../../models/analysis';
+import Purchase from '../../models/purchase';
 
 const getRevenuePerMonth = async (
   req: Request,

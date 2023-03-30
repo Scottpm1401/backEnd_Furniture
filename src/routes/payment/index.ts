@@ -1,11 +1,15 @@
 import { Router } from 'express';
+import { paymentController } from '../../controller';
 
-import controller from '../../controller/Payment';
 import { validateToken } from '../../middleware/validate';
 const router = Router();
 
-router.post('/checkout', validateToken, controller.checkout);
-router.post('/confirm', validateToken, controller.confirmPayment);
-router.post('/check/:product_id', validateToken, controller.productCheck);
+router.post('/checkout', validateToken, paymentController.checkout);
+router.post('/confirm', validateToken, paymentController.confirmPayment);
+router.post(
+  '/check/:product_id',
+  validateToken,
+  paymentController.productCheck
+);
 
 export default router;

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import cloudinary from '../utils/cloudinary';
+import cloudinary from '../../utils/cloudinary';
 
 const getSignature = async (
   req: Request,

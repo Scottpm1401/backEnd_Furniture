@@ -1,32 +1,36 @@
 import { Router } from 'express';
+import { productController } from '../../controller';
 
-import controller from '../../controller/Product';
-import { Schemas, ValidateJoi } from '../../middleware/Joi';
 import { validateAdmin, validateToken } from '../../middleware/validate';
 const router = Router();
 
-router.get('/all', controller.getAllProducts);
-router.get('/get/:id', controller.getProduct);
-router.get('/featured', controller.getFeaturedProducts);
+router.get('/all', productController.getAllProducts);
+router.get('/get/:id', productController.getProduct);
+router.get('/featured', productController.getFeaturedProducts);
 router.get(
   '/cms_all',
   validateToken,
   validateAdmin,
-  controller.getCmsAllProducts
+  productController.getCmsAllProducts
 );
-router.post('/create', validateToken, validateAdmin, controller.createProduct);
+router.post(
+  '/create',
+  validateToken,
+  validateAdmin,
+  productController.createProduct
+);
 router.patch(
   '/update/:id',
   validateToken,
   validateAdmin,
-  controller.updateProduct
+  productController.updateProduct
 );
 router.delete(
   '/delete/:id',
   validateToken,
   validateAdmin,
-  controller.deleteProduct
+  productController.deleteProduct
 );
-router.post('/rating/:id', validateToken, controller.ratingProduct);
+router.post('/rating/:id', validateToken, productController.ratingProduct);
 
 export default router;

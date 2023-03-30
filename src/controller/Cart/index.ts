@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { ProductCartType } from '../models/cart';
-import Product from '../models/product';
-import User from '../models/user';
-import { getIdFromReq } from '../utils/token';
+import { ProductCartType } from '../../models/cart';
+import Product from '../../models/product';
+import User from '../../models/user';
+import { getIdFromReq } from '../../utils/token';
 
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -25,7 +25,7 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
           { _id },
           {
             $addToSet: { cart: newProductCart },
-            $inc: { cart_total: product.price },
+            $inc: { cart_total: product.price * quantity },
           },
 
           { new: true }

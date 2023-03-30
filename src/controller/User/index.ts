@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { parseInt } from 'lodash';
 import moment from 'moment';
 import mongoose, { FilterQuery } from 'mongoose';
-import { CMSList } from '../models/api/cms';
+import { CMSList } from '../../models/api/cms';
 import {
   ChangePasswordRequest,
   LoginRequest,
@@ -11,10 +11,10 @@ import {
   RefreshTokenRequest,
   UpdateSelfUserRequest,
   UpdateUserRequest,
-} from '../models/api/user';
+} from '../../models/api/user';
 
-import User, { UserType, UserTypeModel } from '../models/user';
-import { getIdFromReq, parseJwt, tokenGen } from '../utils/token';
+import User, { UserType, UserTypeModel } from '../../models/user';
+import { getIdFromReq, parseJwt, tokenGen } from '../../utils/token';
 
 let refreshTokens: string[] = [];
 
