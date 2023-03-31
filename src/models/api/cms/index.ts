@@ -19,7 +19,7 @@ export type UpdateOrderedRequest = {
   billingDetails?: BillingDetailsType;
 };
 
-export type CreateTemplateRequest = Omit<TemplateType, '_id'>;
+export type CreateTemplateRequest = Omit<TemplateType, '_id' | 'active'>;
 
 export type UpdateTemplateRequest = Partial<
   Omit<TemplateType, '_id' | 'active'>
