@@ -80,7 +80,7 @@ const deleteTemplate = async (
 
     await Template.findByIdAndDelete(id);
 
-    res.status(200).json({ message: 'Template deleted successfully' });
+    res.status(200).json({ success: true });
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -110,6 +110,20 @@ const activeTemplate = async (
   }
 };
 
+const currentTemplate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const template = await Template.findOne({ active: true });
+
+    res.status(200).json(template);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 export default {
   getAllTemplates,
   getTemplate,
@@ -117,4 +131,5 @@ export default {
   updateTemplate,
   deleteTemplate,
   activeTemplate,
+  currentTemplate,
 };

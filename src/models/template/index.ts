@@ -13,6 +13,7 @@ export type TemplateType = {
   terms_and_condition: ContentType[];
   privacy_policy: ContentType[];
   active: boolean;
+  title: string;
 };
 
 export type BannerType = {

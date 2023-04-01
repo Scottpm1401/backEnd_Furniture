@@ -4,6 +4,8 @@ import { templateController } from '../../controller';
 import { validateAdmin, validateToken } from '../../middleware/validate';
 const router = Router();
 
+router.get('/current', templateController.currentTemplate);
+
 router.get(
   '/all',
   validateToken,
