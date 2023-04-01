@@ -37,10 +37,10 @@ const getAllProducts = async (
     let sortBy = {};
     switch (sort?.toString()) {
       case ProductSort.price_des:
-        sortBy = { price: -1 };
+        sortBy = { price: -1, title: 1 };
         break;
       case ProductSort.price_asc:
-        sortBy = { price: 1 };
+        sortBy = { price: 1, title: 1 };
         break;
       case ProductSort.name_des:
         sortBy = { title: -1 };
