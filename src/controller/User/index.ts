@@ -219,19 +219,16 @@ const updateSelfUser = async (
     const { displayName, username, birthday, info }: UpdateSelfUserRequest =
       req.body;
     const findUser = await User.find({ username });
-    if (findUser.length > 0) {
-      if (findUser[0]._id.toString() !== _id) {
-        return res.status(500).json({ message: 'username_already_existed' });
-      } else {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id },
-          { $set: { displayName, username, birthday, info } },
-          { new: true }
-        ).select('-password');
-        return res.status(200).json(updatedUser);
-      }
+
+    if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
+      return res.status(500).json({ message: 'username_already_existed' });
     } else {
-      return res.status(500).json({ message: 'User not found' });
+      const updatedUser = await User.findOneAndUpdate(
+        { _id },
+        { $set: { displayName, username, birthday, info } },
+        { new: true }
+      ).select('-password');
+      return res.status(200).json(updatedUser);
     }
   } catch (err) {
     return res.status(500).json({ message: err });
