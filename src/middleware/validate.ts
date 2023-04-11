@@ -9,13 +9,14 @@ export const validateToken = (
 ) => {
   const token = req.header('Authorization')?.slice(7); // cut Bearer
 
-  if (!token) return res.status(401).send('Access Denied');
+  if (!token)
+    return res.status(401).send({ message: 'error.auth.access_denied' });
 
   try {
     const verified = jwt.verify(token, process.env.JWT_KEY || '');
     next();
   } catch (err) {
-    return res.status(400).send('Invalid Token');
+    return res.status(400).send({ message: 'error.auth.invalid_token' });
   }
 };
 
@@ -31,6 +32,6 @@ export const validateAdmin = (
   } else {
     return res
       .status(403)
-      .send('You Do Not Have Permission To Access This Content');
+      .json({ message: 'error.auth.do_not_have_permission' });
   }
 };

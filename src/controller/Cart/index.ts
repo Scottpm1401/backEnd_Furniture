@@ -33,13 +33,13 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
         if (user) {
           return res.status(201).json(user.cart);
         } else {
-          return res.status(500).json({ message: 'Failed To Add Product' });
+          return res
+            .status(500)
+            .json({ message: 'error.user.cart.failed_to_add_product' });
         }
       } else {
-        return res.status(500).json({ message: 'Product Does Not Exist' });
+        return res.status(500).json({ message: 'error.product.not_found' });
       }
-    } else {
-      return res.status(500).json({ message: 'Product Does Not Exist' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -55,30 +55,34 @@ const removeFromCart = async (
     const _id = getIdFromReq(req);
     const { product_id, color } = req.body;
     const user_cart = (await User.findById(_id))?.cart;
-    const product = user_cart?.find((item) => item.product_id === product_id);
-    if (product_id && color && product && user_cart) {
-      const user = await User.findOneAndUpdate(
-        { _id, cart: { $elemMatch: { product_id, color } } },
-        {
-          $inc: {
-            cart_total: -(product.price * product.quantity),
-          },
-          $pull: {
-            cart: { product_id, color },
-          },
+    if (!user_cart)
+      return res.status(404).json({ message: 'error.user.cart.not_found' });
+    const product = user_cart.find((item) => item.product_id === product_id);
+    if (!product || !product_id || !color)
+      return res
+        .status(404)
+        .json({ message: 'error.user.cart.product_not_exist' });
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id,
+        cart: { $elemMatch: { product_id, color } },
+      },
+      {
+        $inc: {
+          cart_total: -(product.price * product.quantity),
         },
-        { new: true }
-      );
-      if (user) {
-        return res.status(200).json(user.cart);
-      } else {
-        return res.status(500).json({ message: 'Failed To Remove Product' });
-      }
-    } else {
-      return res.status(500).json({
-        message: 'Product Does Not Existed In Your Cart',
-      });
-    }
+        $pull: {
+          cart: { product_id, color },
+        },
+      },
+      { new: true }
+    );
+    if (!updatedUser)
+      return res
+        .status(500)
+        .json({ message: 'error.user.cart.failed_to_remove' });
+    return res.status(200).json(updatedUser.cart);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -87,7 +91,8 @@ const removeFromCart = async (
 const clearCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = getIdFromReq(req);
-    const user = await User.findOneAndUpdate(
+
+    const updatedUser = await User.findOneAndUpdate(
       { _id },
       {
         $set: {
@@ -97,11 +102,11 @@ const clearCart = async (req: Request, res: Response, next: NextFunction) => {
       },
       { new: true }
     );
-    if (user) {
-      return res.status(200).json({ success: true });
-    } else {
-      return res.status(500).json({ message: 'Failed To Clear Cart' });
-    }
+    if (!updatedUser)
+      return res
+        .status(500)
+        .json({ message: 'error.user.cart.failed_to_clear' });
+    return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -116,29 +121,30 @@ const updateProductCartQuantity = async (
     const _id = getIdFromReq(req);
     const { product_id, color, quantity } = req.body;
     const product = await Product.findById(product_id);
-    if (product_id && product && color && quantity) {
-      const user = await User.findOneAndUpdate(
-        { _id, cart: { $elemMatch: { product_id, color } } },
-        {
-          $inc: {
-            'cart.$.quantity': quantity,
-            cart_total: product.price * quantity,
-          },
-        },
-        { new: true }
-      );
-      if (user) {
-        return res.status(200).json(user.cart);
-      } else {
-        return res
-          .status(500)
-          .json({ message: 'Failed To Update Product Cart' });
-      }
-    } else {
+    if (!product_id || !product || !color || !quantity)
       return res.status(500).json({
-        message: 'Product Does Not Existed In Your Cart',
+        message: 'error.user.cart.product_not_exist',
       });
-    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id,
+        cart: { $elemMatch: { product_id, color } },
+      },
+      {
+        $inc: {
+          'cart.$.quantity': quantity,
+          cart_total: product.price * quantity,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedUser)
+      return res
+        .status(500)
+        .json({ message: 'error.user.cart.failed_to_update_product' });
+    return res.status(200).json(updatedUser.cart);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

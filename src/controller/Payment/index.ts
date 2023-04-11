@@ -19,44 +19,42 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
     const { paymentMethodType, currency }: CheckoutRequest = req.body;
 
     const user = await User.findById(user_id);
-    if (user) {
-      // Create a PaymentIntent with the order amount and currency.
-      const params: Stripe.PaymentIntentCreateParams = {
-        amount: floor(user.cart_total * 100, 2), //api count by cent (100cent = $1)
-        currency: currency ?? 'usd',
-        description: `name: ${user.username}, email: ${user.email}`,
-        payment_method_types: [paymentMethodType],
-      };
-      // If this is for an ACSS payment, we add payment_method_options to create
-      // the Mandate.
-      if (paymentMethodType === 'acss_debit') {
-        params.payment_method_options = {
-          acss_debit: {
-            mandate_options: {
-              payment_schedule: 'sporadic',
-              transaction_type: 'personal',
-            },
-          },
-        };
-      } else if (paymentMethodType === 'customer_balance') {
-        params.payment_method_data = {
-          type: 'customer_balance',
-        } as any;
-        params.confirm = true;
-        params.customer =
-          user_id || (await stripe.customers.create().then((data) => data.id));
-      }
+    if (!user) return res.status(500).json({ message: 'error.user.not_found' });
 
-      const paymentIntent: Stripe.PaymentIntent =
-        await stripe.paymentIntents.create(params);
-      const resData: CheckoutResponse = {
-        clientSecret: paymentIntent.client_secret,
-        nextAction: paymentIntent.next_action,
+    // Create a PaymentIntent with the order amount and currency.
+    const params: Stripe.PaymentIntentCreateParams = {
+      amount: floor(user.cart_total * 100, 2), //api count by cent (100cent = $1)
+      currency: currency ?? 'usd',
+      description: `name: ${user.username}, email: ${user.email}`,
+      payment_method_types: [paymentMethodType],
+    };
+    // If this is for an ACSS payment, we add payment_method_options to create
+    // the Mandate.
+    if (paymentMethodType === 'acss_debit') {
+      params.payment_method_options = {
+        acss_debit: {
+          mandate_options: {
+            payment_schedule: 'sporadic',
+            transaction_type: 'personal',
+          },
+        },
       };
-      return res.status(200).json(resData);
-    } else {
-      return res.status(500).json({ message: 'User Not Found' });
+    } else if (paymentMethodType === 'customer_balance') {
+      params.payment_method_data = {
+        type: 'customer_balance',
+      } as any;
+      params.confirm = true;
+      params.customer =
+        user_id || (await stripe.customers.create().then((data) => data.id));
     }
+
+    const paymentIntent: Stripe.PaymentIntent =
+      await stripe.paymentIntents.create(params);
+    const resData: CheckoutResponse = {
+      clientSecret: paymentIntent.client_secret,
+      nextAction: paymentIntent.next_action,
+    };
+    return res.status(200).json(resData);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
