@@ -12,9 +12,9 @@ const getAllTemplates = async (
 ) => {
   try {
     const templates = await Template.find();
-    res.status(200).json(templates);
+    return res.status(200).json(templates);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -22,9 +22,12 @@ const getTemplate = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const template = await Template.findById(id);
-    res.status(200).json(template);
+
+    if (!template)
+      return res.status(404).json({ message: 'error.template.not_found' });
+    return res.status(200).json(template);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -37,9 +40,9 @@ const createTemplate = async (
     const templateData: CreateTemplateRequest = req.body;
     const newTemplate = new Template(templateData);
     await newTemplate.save();
-    res.status(201).json(newTemplate);
+    return res.status(201).json(newTemplate);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -56,9 +59,12 @@ const updateTemplate = async (
       new: true,
     });
 
-    res.status(200).json(updatedTemplate);
+    if (!updatedTemplate)
+      return res.status(404).json({ message: 'error.template.not_found' });
+
+    return res.status(200).json(updatedTemplate);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -75,14 +81,25 @@ const deleteTemplate = async (
     if (templateCount <= 1) {
       return res
         .status(400)
-        .json({ message: 'Cannot delete the only template' });
+        .json({ message: 'error.template.cannot_delete_only_template' });
     }
 
-    await Template.findByIdAndDelete(id);
+    const template = await Template.findById(id);
 
-    res.status(200).json({ success: true });
+    if (!template)
+      return res.status(404).json({ message: 'error.template.not_found' });
+
+    // check if current template is active?
+    if (template.active)
+      return res
+        .status(500)
+        .json({ message: 'error.template.cannot_delete_active_template' });
+
+    await template.delete();
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -104,9 +121,12 @@ const activeTemplate = async (
       { new: true }
     );
 
-    res.status(200).json(updatedTemplate);
+    if (!updatedTemplate)
+      return res.status(404).json({ message: 'error.template.not_found' });
+
+    return res.status(200).json(updatedTemplate);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -117,10 +137,11 @@ const currentTemplate = async (
 ) => {
   try {
     const template = await Template.findOne({ active: true });
-
-    res.status(200).json(template);
+    if (!template)
+      return res.status(404).json({ message: 'error.template.not_found' });
+    return res.status(200).json(template);
   } catch (err) {
-    res.status(500).json({ message: err });
+    return res.status(500).json({ message: err });
   }
 };
 

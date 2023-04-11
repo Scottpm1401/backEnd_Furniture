@@ -60,6 +60,7 @@ const StartServer = () => {
     next();
   });
 
+  /** Config cors and express body parser */
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(

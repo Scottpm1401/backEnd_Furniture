@@ -46,7 +46,7 @@ const getSelfOrdered = async (
       createdAt: -1,
     });
     if (purchase) return res.status(200).json(purchase);
-    return res.status(404).json({ message: 'Purchase not found' });
+    return res.status(404).json({ message: 'error.purchase.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -57,7 +57,7 @@ const getOrdered = async (req: Request, res: Response, next: NextFunction) => {
     const _id = req.params.id;
     const purchase = await Purchase.findById(_id);
     if (purchase) return res.status(200).json(purchase);
-    return res.status(404).json({ message: 'Purchase not found' });
+    return res.status(404).json({ message: 'error.purchase.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -78,7 +78,8 @@ const updateOrdered = async (
       products,
       billingDetails,
     }: UpdateOrderedRequest = req.body;
-    const purchase = await Purchase.findOneAndUpdate(
+
+    const updatedPurchase = await Purchase.findOneAndUpdate(
       { _id },
       {
         $set: {
@@ -92,7 +93,11 @@ const updateOrdered = async (
       },
       { new: true }
     );
-    return res.status(200).json(purchase);
+    if (!updatedPurchase)
+      return res
+        .status(500)
+        .json({ message: 'error.purchase.failed_to_update' });
+    return res.status(200).json(updatedPurchase);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

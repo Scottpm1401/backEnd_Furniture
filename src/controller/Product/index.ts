@@ -90,7 +90,7 @@ const getProduct = async (req: Request, res: Response, next: NextFunction) => {
     if (product) {
       return res.status(200).json(product);
     } else {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: 'error.product.not_found' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -133,7 +133,9 @@ const createProduct = async (
     if (savedProduct) {
       return res.status(201).json(savedProduct);
     } else {
-      return res.status(500).json({ message: 'Faild to create new product' });
+      return res
+        .status(500)
+        .json({ message: 'error.product.failed_to_create' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -161,6 +163,7 @@ const updateProduct = async (
       review,
       rating,
     }: ProductType = req.body;
+
     const updatedProduct = await Product.findOneAndUpdate(
       { _id },
       {
@@ -181,6 +184,10 @@ const updateProduct = async (
       },
       { new: true }
     );
+    if (!updatedProduct)
+      return res
+        .status(404)
+        .json({ message: 'error.product.failed_to_update' });
     return res.status(200).json(updatedProduct);
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -252,25 +259,22 @@ const ratingProduct = async (
               },
               { new: true }
             );
-            if (updatedProduct) {
-              res.status(200).json({ success: true });
-            } else {
+            if (!updatedProduct)
               return res
                 .status(500)
-                .json({ message: 'Failed To Rating Product' });
-            }
+                .json({ message: 'error.product.failed_to_rating' });
+
+            return res.status(200).json({ success: true });
           } else {
             return res
               .status(500)
-              .json({ message: 'Failed To Rating Product' });
+              .json({ message: 'error.product.failed_to_rating' });
           }
         } else {
-          return res
-            .status(500)
-            .json({ message: 'Failed To find product in purchase' });
+          return res.status(500).json({ message: 'error.product.not_found' });
         }
       } else {
-        return res.status(500).json({ message: 'Failed to find purchase' });
+        return res.status(500).json({ message: 'error.purchase.not_found' });
       }
     }
   } catch (err) {

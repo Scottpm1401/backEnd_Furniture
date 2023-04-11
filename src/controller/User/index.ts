@@ -25,9 +25,13 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     const findUserByEmail = await User.find({ email });
     const findUserByUsername = await User.find({ username });
     if (findUserByEmail.length > 0)
-      return res.status(500).json({ message: 'email_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.email_already_existed' });
     if (findUserByUsername.length > 0)
-      return res.status(500).json({ message: 'username_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.username_already_existed' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const _id = new mongoose.Types.ObjectId();
@@ -51,7 +55,9 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         .status(201)
         .json({ accessToken: token, expiredDate, refreshToken });
     } else {
-      return res.status(500).json({ message: 'user_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.user_already_existed' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -79,10 +85,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           .status(200)
           .json({ accessToken: token, expiredDate, refreshToken });
       } else {
-        return res.status(500).json({ message: 'incorrect_password' });
+        return res
+          .status(500)
+          .json({ message: 'error.auth.incorrect_password' });
       }
     } else {
-      return res.status(500).json({ message: 'invalid_email_username' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.invalid_email_username' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -133,12 +143,14 @@ const changePassword = async (
             refreshToken,
           });
         } else
-          res.status(500).json({ message: 'Failed to change user password' });
+          res
+            .status(500)
+            .json({ message: 'error.user.failed_to_change_password' });
       } else {
         return res.status(500).json({ message: 'incorrect_password' });
       }
     }
-    return res.status(500).json({ message: 'User not found' });
+    return res.status(500).json({ message: 'error.user.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -149,7 +161,7 @@ const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
     const _id = getIdFromReq(req);
     const user = await User.findById(_id).select('-password');
     if (user) return res.status(200).json(user);
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(404).json({ message: 'error.user.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -160,7 +172,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction) => {
     const _id = req.params.id;
     const user = await User.findById(_id).select('-password');
     if (user) return res.status(200).json(user);
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(404).json({ message: 'error.user.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -181,9 +193,13 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     const findUserByUsername = await User.find({ username });
     const findUserByEmail = await User.find({ email });
     if (findUserByEmail[0]._id.toString() !== _id)
-      return res.status(500).json({ message: 'email_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.email_already_existed' });
     if (findUserByUsername[0]._id.toString() !== _id)
-      return res.status(500).json({ message: 'username_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.username_already_existed' });
 
     const hashedPassword = password
       ? await bcrypt.hash(password, 10)
@@ -242,7 +258,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    return res.status(500).json({ messsage: err });
+    return res.status(500).json({ message: err });
   }
 };
 
@@ -283,19 +299,17 @@ const refreshToken = async (
     ) {
       const { _id } = parseJwt(refreshToken);
       const user = await User.findById(_id);
-      if (user) {
-        const expiredDate = moment().add(7, 'days').format();
-        const token = tokenGen(
-          { _id: user._id.toString(), role: user.role },
-          7
-        );
-        refreshTokens.push(refreshToken);
-        return res.status(200).json({ accessToken: token, expiredDate });
-      } else {
-        return res.status(404).json({ message: 'User Not Found' });
-      }
+      if (!user)
+        return res.status(404).json({ message: 'error.user.not_found' });
+
+      const expiredDate = moment().add(7, 'days').format();
+      const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
+      refreshTokens.push(refreshToken);
+      return res.status(200).json({ accessToken: token, expiredDate });
     } else {
-      return res.status(500).json({ message: 'Invalid Refresh Token' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.invalid_refresh_token' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
