@@ -147,7 +147,9 @@ const changePassword = async (
             .status(500)
             .json({ message: 'error.user.failed_to_change_password' });
       } else {
-        return res.status(500).json({ message: 'incorrect_password' });
+        return res
+          .status(500)
+          .json({ message: 'error.auth.incorrect_password' });
       }
     }
     return res.status(500).json({ message: 'error.user.not_found' });
@@ -237,7 +239,9 @@ const updateSelfUser = async (
     const findUser = await User.find({ username });
 
     if (findUser.length > 0 && findUser[0]._id.toString() !== _id) {
-      return res.status(500).json({ message: 'username_already_existed' });
+      return res
+        .status(500)
+        .json({ message: 'error.auth.username_already_existed' });
     } else {
       const updatedUser = await User.findOneAndUpdate(
         { _id },

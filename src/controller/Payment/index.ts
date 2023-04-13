@@ -99,10 +99,12 @@ const confirmPayment = async (
         await Promise.all(updatedProductsReq);
         return res.status(200).json(userOrdered);
       } else {
-        return res.status(500).json({ message: 'Failed To Checkout' });
+        return res
+          .status(500)
+          .json({ message: 'error.user.cart.failed_to_checkout' });
       }
     } else {
-      return res.status(404).json({ message: 'User Not Found' });
+      return res.status(404).json({ message: 'error.user.not_found' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -119,7 +121,8 @@ const productCheck = async (
     const quantity: number = req.body.quantity;
     const product = await Product.findById(product_id);
 
-    if (!product) return res.status(404).json({ message: 'Product Not Found' });
+    if (!product)
+      return res.status(404).json({ message: 'error.product.not_found' });
 
     if (product.storage_quantity < quantity)
       return res.status(500).json({ message: 'out_of_stock' });

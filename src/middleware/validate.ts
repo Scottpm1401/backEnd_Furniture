@@ -16,7 +16,7 @@ export const validateToken = (
     const verified = jwt.verify(token, process.env.JWT_KEY || '');
     next();
   } catch (err) {
-    return res.status(400).send({ message: 'error.auth.invalid_token' });
+    return res.status(401).send({ message: 'error.auth.invalid_token' });
   }
 };
 
