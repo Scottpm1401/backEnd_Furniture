@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^6.6.5",
+    "nodemailer": "^6.9.1",
     "redis": "^4.6.5",
     "stripe": "^11.3.0"
   },
@@ -36,9 +37,10 @@
     "@types/lodash": "^4.14.186",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.8.3",
+    "@types/nodemailer": "^6.4.7",
     "@types/redis": "^4.0.11",
     "nodemon": "^2.0.20",
-    "typescript": "^4.8.4",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4"
   }
 }

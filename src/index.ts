@@ -8,9 +8,11 @@ import { config } from 'dotenv';
 import { createClient } from 'redis';
 import {
   analysisRouter,
+  authRouter,
   orderedRouter,
   paymentRouter,
   productRouter,
+  subscriptionRouter,
   templateRouter,
   uploadRouter,
   userRouter,
@@ -114,6 +116,7 @@ const StartServer = () => {
   });
 
   /** Routes */
+  app.use('/auth', authRouter);
   app.use('/user', userRouter);
   app.use('/product', productRouter);
   app.use('/payment', paymentRouter);
@@ -121,6 +124,7 @@ const StartServer = () => {
   app.use('/ordered', orderedRouter);
   app.use('/analysis', analysisRouter);
   app.use('/template', templateRouter);
+  app.use('/subscription', subscriptionRouter);
 
   /** Healthcheck */
   app.get('/ping', (req, res, next) =>
