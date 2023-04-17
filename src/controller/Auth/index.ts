@@ -18,6 +18,11 @@ import {
   tokenGen,
 } from '../../utils/token';
 import jwt from 'jsonwebtoken';
+import {
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
+} from '../../models/api/auth';
+
 let refreshTokens: string[] = [];
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -166,13 +171,14 @@ const forgotPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { email } = req.body;
+    const { email }: ForgotPasswordRequest = req.body;
     const user = await User.find({ email });
     if (user.length < 1)
       return res.status(500).json({ message: 'error.user.not_found' });
     const code = generateCode();
     const token = resetPasswordTokenGen(email, code);
     await sendResetPasswordEmail(email, token);
+    return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -184,7 +190,7 @@ const resetPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { token, password } = req.body;
+    const { token, password }: ResetPasswordRequest = req.body;
 
     if (!token)
       return res.status(401).json({ message: 'error.auth.access_denied' });
@@ -193,7 +199,7 @@ const resetPassword = async (
 
     const { email } = parseJwt(token);
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { email },
       {
         $set: {
