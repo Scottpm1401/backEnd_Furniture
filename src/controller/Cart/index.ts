@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { UpdateProductCartQuantityResponse } from '../../models/api/user';
 import { ProductCartType } from '../../models/cart';
 import Product from '../../models/product';
 import User from '../../models/user';
@@ -126,25 +127,32 @@ const updateProductCartQuantity = async (
         message: 'error.user.cart.product_not_exist',
       });
 
-    const updatedUser = await User.findOneAndUpdate(
-      {
-        _id,
-        cart: { $elemMatch: { product_id, color } },
-      },
-      {
-        $inc: {
-          'cart.$.quantity': quantity,
-          cart_total: product.price * quantity,
-        },
-      },
-      { new: true }
-    );
+    let updatedUser = await User.findOne({
+      _id,
+      cart: { $elemMatch: { product_id, color } },
+    });
 
     if (!updatedUser)
       return res
         .status(500)
         .json({ message: 'error.user.cart.failed_to_update_product' });
-    return res.status(200).json(updatedUser.cart);
+
+    let cart_total = 0;
+    updatedUser.cart.forEach((item) => {
+      if (item.product_id === product_id && item.color === color) {
+        item.quantity = quantity;
+      }
+      cart_total += item.price * item.quantity;
+    });
+    updatedUser.cart_total = cart_total;
+    await updatedUser.save();
+
+    return res
+      .status(200)
+      .json({
+        cart: updatedUser.cart,
+        cart_total,
+      } as UpdateProductCartQuantityResponse);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

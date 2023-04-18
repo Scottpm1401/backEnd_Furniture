@@ -1,4 +1,4 @@
-import { UserInfoType } from '../../user';
+import { UserInfoType, UserType } from '../../user';
 
 export type LoginRequest = {
   email?: string;
@@ -35,3 +35,8 @@ export type ChangePasswordRequest = {
 export type RefreshTokenRequest = {
   refreshToken: string;
 };
+
+export type UpdateProductCartQuantityResponse = Pick<
+  UserType,
+  'cart' | 'cart_total'
+>;

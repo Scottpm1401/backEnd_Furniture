@@ -125,7 +125,7 @@ const productCheck = async (
       return res.status(404).json({ message: 'error.product.not_found' });
 
     if (product.storage_quantity < quantity)
-      return res.status(500).json({ message: 'out_of_stock' });
+      return res.status(200).json({ success: false });
     return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });
