@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { UpdateProductCartQuantityResponse } from '../../models/api/user';
+import {
+  AddToCartRequest,
+  RemoveFromCartRequest,
+  UpdateProductCartQuantityRequest,
+} from '../../models/api/cart';
+import { UpdateProductCartQuantityResponse } from '../../models/api/cart';
 import { ProductCartType } from '../../models/cart';
 import Product from '../../models/product';
 import User from '../../models/user';
@@ -8,39 +13,38 @@ import { getIdFromReq } from '../../utils/token';
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = getIdFromReq(req);
-    const { product_id, color, quantity } = req.body;
-    if (product_id && color && quantity) {
-      const product = await Product.findById(product_id);
-      if (product && product.colors.findIndex((item) => item === color) > -1) {
-        const newProductCart: ProductCartType = {
-          product_id,
-          color,
-          img: product.img,
-          title: product.title,
-          price: product.price,
-          quantity,
-          brand: product.brand,
-          category: product.category,
-        };
-        const user = await User.findOneAndUpdate(
-          { _id },
-          {
-            $addToSet: { cart: newProductCart },
-            $inc: { cart_total: product.price * quantity },
-          },
+    const { product_id, color, quantity }: AddToCartRequest = req.body;
 
-          { new: true }
-        );
-        if (user) {
-          return res.status(201).json(user.cart);
-        } else {
-          return res
-            .status(500)
-            .json({ message: 'error.user.cart.failed_to_add_product' });
-        }
+    const product = await Product.findById(product_id);
+    if (product && product.colors.findIndex((item) => item === color) > -1) {
+      const newProductCart: ProductCartType = {
+        product_id,
+        color,
+        img: product.img,
+        title: product.title,
+        price: product.price,
+        quantity,
+        brand: product.brand,
+        category: product.category,
+      };
+      const user = await User.findOneAndUpdate(
+        { _id },
+        {
+          $addToSet: { cart: newProductCart },
+          $inc: { cart_total: product.price * quantity },
+        },
+
+        { new: true }
+      );
+      if (user) {
+        return res.status(201).json(user.cart);
       } else {
-        return res.status(500).json({ message: 'error.product.not_found' });
+        return res
+          .status(500)
+          .json({ message: 'error.user.cart.failed_to_add_product' });
       }
+    } else {
+      return res.status(500).json({ message: 'error.product.not_found' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -54,12 +58,12 @@ const removeFromCart = async (
 ) => {
   try {
     const _id = getIdFromReq(req);
-    const { product_id, color } = req.body;
+    const { product_id, color }: RemoveFromCartRequest = req.body;
     const user_cart = (await User.findById(_id))?.cart;
     if (!user_cart)
       return res.status(404).json({ message: 'error.user.cart.not_found' });
     const product = user_cart.find((item) => item.product_id === product_id);
-    if (!product || !product_id || !color)
+    if (!product)
       return res
         .status(404)
         .json({ message: 'error.user.cart.product_not_exist' });
@@ -120,9 +124,10 @@ const updateProductCartQuantity = async (
 ) => {
   try {
     const _id = getIdFromReq(req);
-    const { product_id, color, quantity } = req.body;
+    const { product_id, color, quantity }: UpdateProductCartQuantityRequest =
+      req.body;
     const product = await Product.findById(product_id);
-    if (!product_id || !product || !color || !quantity)
+    if (!product)
       return res.status(500).json({
         message: 'error.user.cart.product_not_exist',
       });
@@ -147,12 +152,10 @@ const updateProductCartQuantity = async (
     updatedUser.cart_total = cart_total;
     await updatedUser.save();
 
-    return res
-      .status(200)
-      .json({
-        cart: updatedUser.cart,
-        cart_total,
-      } as UpdateProductCartQuantityResponse);
+    return res.status(200).json({
+      cart: updatedUser.cart,
+      cart_total,
+    } as UpdateProductCartQuantityResponse);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

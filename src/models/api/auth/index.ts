@@ -35,3 +35,7 @@ export type SignupResponse = {} & LoginResponse;
 export type LogoutRequest = {
   refreshToken: string;
 };
+
+export type RefreshTokenRequest = {
+  refreshToken: string;
+};

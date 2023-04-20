@@ -7,7 +7,7 @@ import {
   LoginRequest,
   LogoutRequest,
   RefreshTokenRequest,
-} from '../../models/api/user';
+} from '../../models/api/auth';
 import User, { UserType } from '../../models/user';
 import { sendResetPasswordEmail } from '../../utils/email';
 import {

@@ -117,9 +117,9 @@ const productCheck = async (
   next: NextFunction
 ) => {
   try {
-    const { product_id } = req.params;
+    const { id } = req.params;
     const quantity: number = req.body.quantity;
-    const product = await Product.findById(product_id);
+    const product = await Product.findById(id);
 
     if (!product)
       return res.status(404).json({ message: 'error.product.not_found' });
