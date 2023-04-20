@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
 import { CMSList } from '../../models/api/cms';
+import { ProductRatingRequest } from '../../models/api/product';
 import Product, {
   ProductSort,
   ProductType,
@@ -160,8 +161,6 @@ const updateProduct = async (
       sku,
       storage_quantity,
       colors,
-      review,
-      rating,
     }: ProductType = req.body;
 
     const updatedProduct = await Product.findOneAndUpdate(
@@ -178,8 +177,6 @@ const updateProduct = async (
           sku,
           storage_quantity,
           colors,
-          review,
-          rating,
         },
       },
       { new: true }
@@ -217,65 +214,63 @@ const ratingProduct = async (
   try {
     const _id = getIdFromReq(req);
     const product_id = req.params.id;
-    const { rate, purchase_id, color } = req.body;
+    const { rate, purchase_id, color }: ProductRatingRequest = req.body;
 
-    if (_id && product_id && rate && purchase_id && color) {
-      const user = await User.findById(_id);
-      const purchase = await Purchase.findById(purchase_id);
-      if (purchase && user) {
-        const productIndex = purchase.products.findIndex(
-          (item) => item.product_id === product_id && item.color === color
-        );
-        if (productIndex > -1) {
-          purchase.products[productIndex].rating = rate;
-          await purchase.save();
-          const product = await Product.findById(product_id);
-          if (product) {
-            const newRating: RatingType = {
-              rate: product.rating?.rate
-                ? (product.rating.rate * product.rating.num_of_rate + rate) /
-                  (product.rating.num_of_rate + 1)
-                : rate,
-              num_of_rate: product.rating?.num_of_rate
-                ? product.rating.num_of_rate + 1
-                : 1,
-            };
+    const user = await User.findById(_id);
+    const purchase = await Purchase.findById(purchase_id);
+    if (purchase && user) {
+      const productIndex = purchase.products.findIndex(
+        (item) => item.product_id === product_id && item.color === color
+      );
+      if (productIndex > -1) {
+        purchase.products[productIndex].rating = rate;
+        await purchase.save();
+        const product = await Product.findById(product_id);
+        if (product) {
+          const newRating: RatingType = {
+            rate: product.rating?.rate
+              ? (product.rating.rate * product.rating.num_of_rate + rate) /
+                (product.rating.num_of_rate + 1)
+              : rate,
+            num_of_rate: product.rating?.num_of_rate
+              ? product.rating.num_of_rate + 1
+              : 1,
+          };
 
-            const updatedProduct = await Product.findOneAndUpdate(
-              { _id: product_id },
-              {
-                $addToSet: {
-                  review: {
-                    user_id: user._id,
-                    name: user.username,
-                    email: user.email,
-                    phone: user.info.phone,
-                  },
-                },
-
-                $set: {
-                  rating: newRating,
+          const updatedProduct = await Product.findOneAndUpdate(
+            { _id: product_id },
+            {
+              $addToSet: {
+                review: {
+                  user_id: user._id,
+                  name: user.username,
+                  email: user.email,
+                  phone: user.info.phone,
                 },
               },
-              { new: true }
-            );
-            if (!updatedProduct)
-              return res
-                .status(500)
-                .json({ message: 'error.product.failed_to_rating' });
 
-            return res.status(200).json({ success: true });
-          } else {
+              $set: {
+                rating: newRating,
+              },
+            },
+            { new: true }
+          );
+          if (!updatedProduct)
             return res
               .status(500)
               .json({ message: 'error.product.failed_to_rating' });
-          }
+
+          return res.status(200).json({ success: true });
         } else {
-          return res.status(500).json({ message: 'error.product.not_found' });
+          return res
+            .status(500)
+            .json({ message: 'error.product.failed_to_rating' });
         }
       } else {
-        return res.status(500).json({ message: 'error.purchase.not_found' });
+        return res.status(500).json({ message: 'error.product.not_found' });
       }
+    } else {
+      return res.status(500).json({ message: 'error.purchase.not_found' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });

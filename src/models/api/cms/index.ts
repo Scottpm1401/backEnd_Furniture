@@ -1,6 +1,6 @@
 import {
   BillingDetailsType,
-  PurchaseProduct,
+  PurchaseProductType,
   PurchaseStatus,
 } from '../../purchase';
 import { TemplateType } from '../../template';
@@ -15,7 +15,7 @@ export type UpdateOrderedRequest = {
   arrive_date?: string;
   package_date?: string;
   total_bill?: number;
-  products?: PurchaseProduct[];
+  products?: PurchaseProductType[];
   billingDetails?: BillingDetailsType;
 };
 

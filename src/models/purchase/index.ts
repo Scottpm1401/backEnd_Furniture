@@ -10,7 +10,7 @@ export type PurchaseType = {
   package_date: string;
   arrive_date?: string;
   billingDetails: BillingDetailsType;
-  products: PurchaseProduct[];
+  products: PurchaseProductType[];
   id?: string;
   user_id: string;
   createdAt: Date;
@@ -30,7 +30,7 @@ export type BillingDetailsType = {
   address: AddressType;
 };
 
-export type PurchaseProduct = {
+export type PurchaseProductType = {
   rating?: number;
   id?: string;
 } & ProductCartType;
