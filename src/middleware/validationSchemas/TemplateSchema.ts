@@ -11,10 +11,12 @@ const ContentsSchema = Joi.array<ContentType[]>()
     Joi.object<ContentType>({
       lang: Joi.string().valid('en', 'vi').required(),
       content: Joi.string().required(),
+      _id: Joi.string(),
     })
   );
 
 const BannerSchema = Joi.object<BannerType>({
+  _id: Joi.string(),
   image: Joi.string().required(),
   title: ContentsSchema,
   description: ContentsSchema,
@@ -26,7 +28,7 @@ const TemplateSchema = {
     about: BannerSchema.required(),
     home_footer: ContentsSchema.required(),
     contact: ContentsSchema.required(),
-    terms_and_condition: ContentsSchema.required(),
+    terms_and_conditions: ContentsSchema.required(),
     privacy_policy: ContentsSchema.required(),
     title: Joi.string().required(),
   }),
@@ -35,7 +37,7 @@ const TemplateSchema = {
     about: BannerSchema,
     home_footer: ContentsSchema,
     contact: ContentsSchema,
-    terms_and_condition: ContentsSchema,
+    terms_and_conditions: ContentsSchema,
     privacy_policy: ContentsSchema,
     title: Joi.string(),
   }),

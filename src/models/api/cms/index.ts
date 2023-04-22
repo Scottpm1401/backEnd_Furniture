@@ -1,8 +1,4 @@
-import {
-  BillingDetailsType,
-  PurchaseProductType,
-  PurchaseStatus,
-} from '../../purchase';
+import { BillingDetailsType, PurchaseStatus } from '../../purchase';
 import { TemplateType } from '../../template';
 
 export type CMSList<T> = {
@@ -15,7 +11,6 @@ export type UpdateOrderedRequest = {
   arrive_date?: string;
   package_date?: string;
   total_bill?: number;
-  products?: PurchaseProductType[];
   billingDetails?: BillingDetailsType;
 };
 

@@ -75,7 +75,6 @@ const updateOrdered = async (
       arrive_date,
       package_date,
       total_bill,
-      products,
       billingDetails,
     }: UpdateOrderedRequest = req.body;
 
@@ -87,7 +86,6 @@ const updateOrdered = async (
           arrive_date,
           package_date,
           total_bill,
-          products,
           billingDetails,
         },
       },

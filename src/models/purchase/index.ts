@@ -32,7 +32,6 @@ export type BillingDetailsType = {
 
 export type PurchaseProductType = {
   rating?: number;
-  id?: string;
 } & ProductCartType;
 
 export type PurchaseTypeModel = {} & PurchaseType & Document;
