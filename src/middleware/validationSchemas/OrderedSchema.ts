@@ -16,26 +16,12 @@ export const BillingDetailsSchema = Joi.object<BillingDetailsType>({
   }).required(),
 });
 
-const PurchaseProductSchema = Joi.object<PurchaseProductType>({
-  rating: Joi.number(),
-  id: Joi.string(),
-  product_id: Joi.string().required(),
-  img: Joi.string().required(),
-  title: Joi.string().required(),
-  price: Joi.number().required(),
-  color: Joi.string().required(),
-  quantity: Joi.number().integer().required(),
-  brand: Joi.string().required(),
-  category: Joi.string().required(),
-});
-
 const OrderedSchema = {
   update: Joi.object<UpdateOrderedRequest>({
     status: Joi.string().valid('PACKAGE', 'SHIPPING', 'DELIVERED'),
     arrive_date: Joi.string(),
     package_date: Joi.string(),
     total_bill: Joi.number(),
-    products: Joi.array().items(PurchaseProductSchema),
     billingDetails: BillingDetailsSchema,
   }),
 };
