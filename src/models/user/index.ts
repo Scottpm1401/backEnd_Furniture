@@ -27,7 +27,6 @@ export type AddressType = {
 };
 
 export type UserType = {
-  _id: string;
   displayName?: string;
   email: string;
   username: string;
@@ -37,6 +36,10 @@ export type UserType = {
   info: UserInfoType;
   cart_total: number;
   cart: ProductCartType[];
+};
+
+export type UserResponse = Omit<UserType, 'password'> & {
+  _id: string;
 };
 
 export type UserTypeModel = {} & UserType & Document;

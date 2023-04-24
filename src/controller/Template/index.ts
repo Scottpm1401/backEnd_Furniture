@@ -4,6 +4,7 @@ import {
   UpdateTemplateRequest,
 } from '../../models/api/cms';
 import Template from '../../models/template';
+import { templateSerializer } from '../../serializers';
 
 const getAllTemplates = async (
   req: Request,
@@ -12,7 +13,10 @@ const getAllTemplates = async (
 ) => {
   try {
     const templates = await Template.find();
-    return res.status(200).json(templates);
+    const formattedTemplates = templates.map((template) =>
+      templateSerializer(template)
+    );
+    return res.status(200).json(formattedTemplates);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -25,7 +29,7 @@ const getTemplate = async (req: Request, res: Response, next: NextFunction) => {
 
     if (!template)
       return res.status(404).json({ message: 'error.template.not_found' });
-    return res.status(200).json(template);
+    return res.status(200).json(templateSerializer(template));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -40,7 +44,7 @@ const createTemplate = async (
     const templateData: CreateTemplateRequest = req.body;
     const newTemplate = new Template(templateData);
     await newTemplate.save();
-    return res.status(201).json(newTemplate);
+    return res.status(201).json(templateSerializer(newTemplate));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -62,7 +66,7 @@ const updateTemplate = async (
     if (!updatedTemplate)
       return res.status(404).json({ message: 'error.template.not_found' });
 
-    return res.status(200).json(updatedTemplate);
+    return res.status(200).json(templateSerializer(updatedTemplate));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -124,7 +128,7 @@ const activeTemplate = async (
     if (!updatedTemplate)
       return res.status(404).json({ message: 'error.template.not_found' });
 
-    return res.status(200).json(updatedTemplate);
+    return res.status(200).json(templateSerializer(updatedTemplate));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -139,7 +143,7 @@ const currentTemplate = async (
     const template = await Template.findOne({ active: true });
     if (!template)
       return res.status(404).json({ message: 'error.template.not_found' });
-    return res.status(200).json(template);
+    return res.status(200).json(templateSerializer(template));
   } catch (err) {
     return res.status(500).json({ message: err });
   }

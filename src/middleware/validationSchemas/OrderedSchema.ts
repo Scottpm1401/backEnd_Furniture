@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { UpdateOrderedRequest } from '../../models/api/cms';
-import { BillingDetailsType, PurchaseProductType } from '../../models/purchase';
+import { BillingDetailsType } from '../../models/purchase';
 import { AddressType } from '../../models/user';
 
 export const BillingDetailsSchema = Joi.object<BillingDetailsType>({
