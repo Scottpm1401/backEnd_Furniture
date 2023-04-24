@@ -11,6 +11,7 @@ import {
 import Product from '../../models/product';
 import Purchase from '../../models/purchase';
 import User from '../../models/user';
+import { orderedSerializer } from '../../serializers';
 import { getIdFromReq } from '../../utils/token';
 
 const checkout = async (req: Request, res: Response, next: NextFunction) => {
@@ -96,8 +97,14 @@ const confirmPayment = async (
           );
           return updatedProduct;
         });
+
         await Promise.all(updatedProductsReq);
-        return res.status(200).json(userOrdered);
+
+        const formattedOrdered = userOrdered.map((order) =>
+          orderedSerializer(order)
+        );
+
+        return res.status(200).json(formattedOrdered);
       } else {
         return res
           .status(500)

@@ -3,6 +3,7 @@ import mongoose, { FilterQuery } from 'mongoose';
 import { CMSList } from '../../models/api/cms';
 import { ProductRatingRequest } from '../../models/api/product';
 import Product, {
+  ProductResponse,
   ProductSort,
   ProductType,
   ProductTypeModel,
@@ -10,6 +11,7 @@ import Product, {
 } from '../../models/product';
 import Purchase from '../../models/purchase';
 import User from '../../models/user';
+import { productSerializer } from '../../serializers';
 import { getIdFromReq } from '../../utils/token';
 
 const getAllProducts = async (
@@ -58,7 +60,12 @@ const getAllProducts = async (
       .sort(sortBy)
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
-    return res.status(200).json(products);
+
+    const formattedProducts = products.map((product) =>
+      productSerializer(product)
+    );
+
+    return res.status(200).json(formattedProducts);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -78,7 +85,12 @@ const getFeaturedProducts = async (
         price: 'desc',
       })
       .limit(parseInt(limit?.toString() ?? '3'));
-    return res.status(200).json(featuredProducts);
+
+    const formattedProducts = featuredProducts.map((product) =>
+      productSerializer(product)
+    );
+
+    return res.status(200).json(formattedProducts);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -89,7 +101,7 @@ const getProduct = async (req: Request, res: Response, next: NextFunction) => {
     const _id = req.params.id;
     const product = await Product.findById(_id);
     if (product) {
-      return res.status(200).json(product);
+      return res.status(200).json(productSerializer(product));
     } else {
       return res.status(404).json({ message: 'error.product.not_found' });
     }
@@ -132,7 +144,7 @@ const createProduct = async (
     });
     const savedProduct = await product.save();
     if (savedProduct) {
-      return res.status(201).json(savedProduct);
+      return res.status(201).json(productSerializer(savedProduct));
     } else {
       return res
         .status(500)
@@ -185,7 +197,7 @@ const updateProduct = async (
       return res
         .status(404)
         .json({ message: 'error.product.failed_to_update' });
-    return res.status(200).json(updatedProduct);
+    return res.status(200).json(productSerializer(updatedProduct));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -295,9 +307,14 @@ const getCmsAllProducts = async (
       .skip(parseInt(offset?.toString() ?? '0'))
       .limit(parseInt(limit?.toString() ?? '0'));
     const total = await Product.find(filter).count();
-    return res
-      .status(200)
-      .json({ data: products, total } as CMSList<ProductType[]>);
+    const formattedProducts = products.map((product) =>
+      productSerializer(product)
+    );
+
+    return res.status(200).json({
+      data: formattedProducts,
+      total,
+    } as CMSList<ProductResponse[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

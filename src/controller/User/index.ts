@@ -8,14 +8,15 @@ import {
   UpdateUserRequest,
 } from '../../models/api/user';
 
-import User, { UserType, UserTypeModel } from '../../models/user';
+import User, { UserResponse, UserTypeModel } from '../../models/user';
+import { userSerializer } from '../../serializers';
 import { getIdFromReq } from '../../utils/token';
 
 const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = getIdFromReq(req);
-    const user = await User.findById(_id).select('-password');
-    if (user) return res.status(200).json(user);
+    const user = await User.findById(_id);
+    if (user) return res.status(200).json(userSerializer(user));
     return res.status(404).json({ message: 'error.user.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -25,8 +26,8 @@ const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
 const getUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = req.params.id;
-    const user = await User.findById(_id).select('-password');
-    if (user) return res.status(200).json(user);
+    const user = await User.findById(_id);
+    if (user) return res.status(200).json(userSerializer(user));
     return res.status(404).json({ message: 'error.user.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -73,8 +74,12 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
         },
       },
       { new: true }
-    ).select('-password');
-    return res.status(200).json(updatedUser);
+    );
+    if (!updatedUser)
+      return res
+        .status(500)
+        .json({ message: 'error.user.failed_to_update_user' });
+    return res.status(200).json(userSerializer(updatedUser));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -100,8 +105,12 @@ const updateSelfUser = async (
         { _id },
         { $set: { displayName, username, birthday, info } },
         { new: true }
-      ).select('-password');
-      return res.status(200).json(updatedUser);
+      );
+      if (!updatedUser)
+        return res
+          .status(500)
+          .json({ message: 'error.user.failed_to_update_user' });
+      return res.status(200).json(userSerializer(updatedUser));
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -132,12 +141,16 @@ const getAllUser = async (req: Request, res: Response, next: NextFunction) => {
 
     const users = await User.find(filter)
       .skip(parseInt(offset?.toString() ?? '0'))
-      .limit(parseInt(limit?.toString() ?? '0'))
-      .select('-password');
+      .limit(parseInt(limit?.toString() ?? '0'));
 
     const total = await User.find(filter).count();
 
-    return res.status(200).json({ data: users, total } as CMSList<UserType[]>);
+    const formattedUsers = users.map((user) => userSerializer(user));
+
+    return res.status(200).json({
+      data: formattedUsers,
+      total,
+    } as CMSList<UserResponse[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

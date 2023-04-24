@@ -1,11 +1,12 @@
-import Purchase, {
-  PurchaseType,
-  PurchaseTypeModel,
-} from '../../models/purchase';
 import { NextFunction, Request, Response } from 'express';
-import { getIdFromReq } from '../../utils/token';
 import { FilterQuery } from 'mongoose';
 import { CMSList, UpdateOrderedRequest } from '../../models/api/cms';
+import Purchase, {
+  PurchaseResponse,
+  PurchaseTypeModel,
+} from '../../models/purchase';
+import { orderedSerializer } from '../../serializers';
+import { getIdFromReq } from '../../utils/token';
 
 const getOrderedList = async (
   req: Request,
@@ -27,9 +28,11 @@ const getOrderedList = async (
       .sort({ createdAt: -1 });
     const total = await Purchase.find(filter).count();
 
+    const formattedOrdered = ordered.map((order) => orderedSerializer(order));
+
     return res
       .status(200)
-      .json({ data: ordered, total } as CMSList<PurchaseType[]>);
+      .json({ data: formattedOrdered, total } as CMSList<PurchaseResponse[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
@@ -42,10 +45,13 @@ const getSelfOrdered = async (
 ) => {
   try {
     const _id = getIdFromReq(req);
-    const purchase = await Purchase.find({ user_id: _id }).sort({
+    const ordered = await Purchase.find({ user_id: _id }).sort({
       createdAt: -1,
     });
-    if (purchase) return res.status(200).json(purchase);
+
+    const formattedOrdered = ordered.map((order) => orderedSerializer(order));
+
+    if (ordered) return res.status(200).json(formattedOrdered);
     return res.status(404).json({ message: 'error.purchase.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -56,7 +62,7 @@ const getOrdered = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const _id = req.params.id;
     const purchase = await Purchase.findById(_id);
-    if (purchase) return res.status(200).json(purchase);
+    if (purchase) return res.status(200).json(orderedSerializer(purchase));
     return res.status(404).json({ message: 'error.purchase.not_found' });
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -95,7 +101,7 @@ const updateOrdered = async (
       return res
         .status(500)
         .json({ message: 'error.purchase.failed_to_update' });
-    return res.status(200).json(updatedPurchase);
+    return res.status(200).json(orderedSerializer(updatedPurchase));
   } catch (err) {
     return res.status(500).json({ message: err });
   }

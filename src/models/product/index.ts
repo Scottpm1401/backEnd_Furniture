@@ -36,6 +36,10 @@ export type ProductType = {
   colors: string[];
 };
 
+export type ProductResponse = ProductType & {
+  _id: string;
+};
+
 export type ProductTypeModel = {} & ProductType & Document;
 
 /*******************************SCHEMA*****************************/

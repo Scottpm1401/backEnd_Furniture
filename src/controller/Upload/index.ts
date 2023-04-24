@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { GetSignatureType } from '../../models/upload';
+import { GetSignatureType, SignedUpload } from '../../models/upload';
 import cloudinary from '../../utils/cloudinary';
 
 const getSignature = async (
@@ -22,7 +22,7 @@ const getSignature = async (
       },
       api_secret
     );
-    res.json({ timestamp, signature });
+    return res.status(200).json({ timestamp, signature } as SignedUpload);
   } catch (err) {
     return res.status(500).json({ message: err });
   }

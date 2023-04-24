@@ -5,7 +5,6 @@ export const langCodeReg = /^([a-z]{2})$/;
 /*********************TYPE & INTERFACE*****************************/
 
 export type TemplateType = {
-  _id: string;
   banners: BannerType[];
   about: BannerType;
   home_footer: ContentType[];
@@ -33,6 +32,10 @@ export enum Language {
   vietnam = 'vi',
   english = 'en',
 }
+
+export type TemplateResponse = TemplateType & {
+  _id: string;
+};
 
 export type TemplateModel = {} & TemplateType & Document;
 

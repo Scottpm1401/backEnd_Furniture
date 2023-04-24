@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 import { ProductCartType } from '../cart';
 import { AddressType } from '../user';
 
@@ -11,7 +11,6 @@ export type PurchaseType = {
   arrive_date?: string;
   billingDetails: BillingDetailsType;
   products: PurchaseProductType[];
-  id?: string;
   user_id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +32,10 @@ export type BillingDetailsType = {
 export type PurchaseProductType = {
   rating?: number;
 } & ProductCartType;
+
+export type PurchaseResponse = PurchaseType & {
+  _id: string;
+};
 
 export type PurchaseTypeModel = {} & PurchaseType & Document;
 
