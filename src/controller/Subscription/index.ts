@@ -76,4 +76,20 @@ const getSubscriptions = async (
   }
 };
 
-export default { subscribe, getSubscriptions };
+const getSubscription = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const _id = req.params.id;
+    const subscription = await Subscription.findById(_id);
+    if (subscription)
+      return res.status(200).json(subscriptionSerializer(subscription));
+    return res.status(404).json({ message: 'error.subscription.not_found' });
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
+export default { subscribe, getSubscriptions, getSubscription };

@@ -13,6 +13,13 @@ router.get(
   subscriptionController.getSubscriptions
 );
 
+router.get(
+  '/get/:id',
+  validateToken,
+  validateAdmin,
+  subscriptionController.getSubscription
+);
+
 router.post(
   '/subscribe',
   ValidateJoi(SubscriptionSchema.subscribe),
