@@ -1,8 +1,11 @@
 import { Router } from 'express';
 import { subscriptionController } from '../../controller';
-import { ValidateJoi } from '../../middleware/Joi';
+import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
 import { validateAdmin, validateToken } from '../../middleware/validate';
-import { SubscriptionSchema } from '../../middleware/validationSchemas';
+import {
+  ParamsSchema,
+  SubscriptionSchema,
+} from '../../middleware/validationSchemas';
 
 const router = Router();
 
@@ -18,6 +21,15 @@ router.get(
   validateToken,
   validateAdmin,
   subscriptionController.getSubscription
+);
+
+router.post(
+  '/update/:id',
+  validateToken,
+  validateAdmin,
+  ValidateJoiParam(ParamsSchema.common),
+  ValidateJoi(SubscriptionSchema.update),
+  subscriptionController.updateSubscription
 );
 
 router.post(

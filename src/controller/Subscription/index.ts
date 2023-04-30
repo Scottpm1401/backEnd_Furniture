@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
-import { CMSList } from '../../models/api/cms';
+import { CMSList, UpdateSubscriptionRequest } from '../../models/api/cms';
 import Subscription, {
   SubscriptionModel,
   SubscriptionResponse,
@@ -92,4 +92,39 @@ const getSubscription = async (
   }
 };
 
-export default { subscribe, getSubscriptions, getSubscription };
+const updateSubscription = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const _id = req.params.id;
+    const { phone, address, name }: UpdateSubscriptionRequest = req.body;
+
+    const updatedSubscription = await Subscription.findOneAndUpdate(
+      { _id },
+      {
+        $set: {
+          phone,
+          address,
+          name,
+        },
+      },
+      { new: true }
+    );
+    if (!updatedSubscription)
+      return res
+        .status(500)
+        .json({ message: 'error.subscription.failed_to_update' });
+    return res.status(200).json(subscriptionSerializer(updatedSubscription));
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
+};
+
+export default {
+  subscribe,
+  getSubscriptions,
+  getSubscription,
+  updateSubscription,
+};
