@@ -114,6 +114,8 @@ const StartServer = () => {
       throw err;
     }
   });
+  /** Cookie */
+  app.set('trust proxy', 1);
 
   /** Routes */
   app.use('/auth', authRouter);
