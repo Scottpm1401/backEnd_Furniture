@@ -1,4 +1,5 @@
 import { BillingDetailsType, PurchaseStatus } from '../../purchase';
+import { SubscriptionType } from '../../subscription';
 import { TemplateType } from '../../template';
 
 export type CMSList<T> = {
@@ -13,6 +14,8 @@ export type UpdateOrderedRequest = {
   total_bill?: number;
   billingDetails?: BillingDetailsType;
 };
+
+export type UpdateSubscriptionRequest = Omit<SubscriptionType, 'email'>;
 
 export type CreateTemplateRequest = Omit<TemplateType, 'active'>;
 
