@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
 /*********************TYPE & INTERFACE*****************************/
 export type SubscriptionType = {
@@ -6,6 +6,10 @@ export type SubscriptionType = {
   phone?: string;
   name?: string;
   address?: string;
+};
+
+export type SubscriptionResponse = SubscriptionType & {
+  _id: string;
 };
 
 export type SubscriptionModel = {} & SubscriptionType & Document;
