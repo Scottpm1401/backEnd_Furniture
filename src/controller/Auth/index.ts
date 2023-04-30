@@ -1,12 +1,15 @@
 import bcrypt from 'bcrypt';
-import { CookieOptions, NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import mongoose from 'mongoose';
 import {
   ChangePasswordRequest,
+  ForgotPasswordRequest,
   LoginRequest,
   LogoutRequest,
   RefreshTokenRequest,
+  ResetPasswordRequest,
 } from '../../models/api/auth';
 import User, { UserType } from '../../models/user';
 import { sendResetPasswordEmail } from '../../utils/email';
@@ -17,19 +20,8 @@ import {
   resetPasswordTokenGen,
   tokenGen,
 } from '../../utils/token';
-import jwt from 'jsonwebtoken';
-import {
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
-} from '../../models/api/auth';
 
 let refreshTokens: string[] = [];
-
-const cookieOptions: CookieOptions = {
-  httpOnly: true,
-  secure: true,
-  sameSite: 'none',
-};
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -67,10 +59,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       refreshTokens.push(refreshToken);
       return res
         .status(201)
-        .cookie('access_token', token, cookieOptions)
-        .cookie('expired_date', expiredDate, cookieOptions)
-        .cookie('refresh_token', refreshToken, cookieOptions)
-        .json({ success: true });
+        .json({ accessToken: token, expiredDate, refreshToken });
     } else {
       return res
         .status(500)
@@ -100,10 +89,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         refreshTokens.push(refreshToken);
         return res
           .status(200)
-          .cookie('access_token', token, cookieOptions)
-          .cookie('expired_date', expiredDate, cookieOptions)
-          .cookie('refresh_token', refreshToken, cookieOptions)
-          .json({ success: true });
+          .json({ accessToken: token, expiredDate, refreshToken });
       } else {
         return res
           .status(500)
@@ -250,11 +236,7 @@ const refreshToken = async (
       const expiredDate = moment().add(7, 'days').format();
       const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
       refreshTokens.push(refreshToken);
-      return res
-        .status(200)
-        .cookie('access_token', token, cookieOptions)
-        .cookie('expired_date', expiredDate, cookieOptions)
-        .json({ success: true });
+      return res.status(200).json({ accessToken: token, expiredDate });
     } else {
       return res
         .status(500)
