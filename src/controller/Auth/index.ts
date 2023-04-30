@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { NextFunction, Request, Response } from 'express';
+import { CookieOptions, NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import mongoose from 'mongoose';
 import {
@@ -24,6 +24,12 @@ import {
 } from '../../models/api/auth';
 
 let refreshTokens: string[] = [];
+
+const cookieOptions: CookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+};
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -60,7 +66,10 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       refreshTokens.push(refreshToken);
       return res
         .status(201)
-        .json({ accessToken: token, expiredDate, refreshToken });
+        .cookie('access_token', token, cookieOptions)
+        .cookie('expired_date', expiredDate, cookieOptions)
+        .cookie('refresh_token', refreshToken, cookieOptions)
+        .json({ success: true });
     } else {
       return res
         .status(500)
@@ -90,7 +99,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         refreshTokens.push(refreshToken);
         return res
           .status(200)
-          .json({ accessToken: token, expiredDate, refreshToken });
+          .cookie('access_token', token, cookieOptions)
+          .cookie('expired_date', expiredDate, cookieOptions)
+          .cookie('refresh_token', refreshToken, cookieOptions)
+          .json({ success: true });
       } else {
         return res
           .status(500)
@@ -237,7 +249,11 @@ const refreshToken = async (
       const expiredDate = moment().add(7, 'days').format();
       const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
       refreshTokens.push(refreshToken);
-      return res.status(200).json({ accessToken: token, expiredDate });
+      return res
+        .status(200)
+        .cookie('access_token', token, cookieOptions)
+        .cookie('expired_date', expiredDate, cookieOptions)
+        .json({ success: true });
     } else {
       return res
         .status(500)
