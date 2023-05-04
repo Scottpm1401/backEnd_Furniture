@@ -234,7 +234,6 @@ const refreshToken = async (
 
       const expiredDate = moment().add(7, 'days').format();
       const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
-      refreshTokens.push(refreshToken);
       return res.status(200).json({ accessToken: token, expiredDate });
     } else {
       return res
