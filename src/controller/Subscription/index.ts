@@ -50,7 +50,7 @@ const getSubscriptions = async (
   try {
     const { offset, limit, search } = req.query;
     const searchFilter = search
-      ? { $text: { $search: search.toString() } }
+      ? { email: { $regex: search.toString(), $options: 'i' } }
       : {};
     const filter: FilterQuery<SubscriptionModel> = {
       ...searchFilter,
