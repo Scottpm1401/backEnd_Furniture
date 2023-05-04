@@ -3,14 +3,14 @@ import { Request } from 'express';
 
 export const tokenGen = (data: any, days?: number) => {
   return jwt.sign(data, process.env.JWT_KEY || '', {
-    expiresIn: 60 * 60 * 24 * (days || 1), //1 day
+    expiresIn: 60 * 60 * 24 * (days || 1), // 1 day
   });
 };
 
 export const resetPasswordTokenGen = (email: string, code: string) => {
   const payload = { email, code };
   const token = jwt.sign(payload, process.env.JWT_KEY || '', {
-    expiresIn: 60 * 15,
+    expiresIn: 60 * 15, // 15 minutes
   });
   return token;
 };
