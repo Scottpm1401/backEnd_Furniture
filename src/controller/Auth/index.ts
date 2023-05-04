@@ -29,7 +29,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       req.body;
     const findUserByEmail = await User.find({ email });
     const findUserByUsername = await User.find({ username });
-    console.log('test');
     if (findUserByEmail.length > 0)
       return res
         .status(500)
