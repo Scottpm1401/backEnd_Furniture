@@ -107,9 +107,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 const logout = (req: Request, res: Response, next: NextFunction) => {
   try {
     const { refreshToken }: LogoutRequest = req.body;
-    if (refreshToken) {
+    if (refreshToken)
       refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-    }
+
     return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -227,6 +227,7 @@ const refreshToken = async (
       refreshToken &&
       refreshTokens.findIndex((token) => token === refreshToken) > -1
     ) {
+      const verified = jwt.verify(refreshToken, process.env.JWT_KEY || '');
       const { _id } = parseJwt(refreshToken);
       const user = await User.findById(_id);
       if (!user)
@@ -234,6 +235,8 @@ const refreshToken = async (
 
       const expiredDate = moment().add(7, 'days').format();
       const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
+      refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+
       return res.status(200).json({ accessToken: token, expiredDate });
     } else {
       return res
