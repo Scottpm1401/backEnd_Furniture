@@ -76,9 +76,15 @@ const getBoughtProduct = async (
   next: NextFunction
 ) => {
   try {
-    const month = req.params.month;
+    const month = req.query.month?.toString();
+    const year = req.query.year?.toString();
 
-    const currentYear = moment().year();
+    if (!month || !year)
+      return res
+        .status(500)
+        .json({ message: 'error.analysis.failed_to_get_bought_products' });
+
+    const currentYear = Number(year);
     const startDate = moment(month, 'MM')
       .year(currentYear)
       .startOf('month')
@@ -125,9 +131,15 @@ const getTop10Users = async (
   res: Response,
   next: NextFunction
 ) => {
-  const month = req.params.month;
+  const month = req.query.month?.toString();
+  const year = req.query.year?.toString();
 
-  const currentYear = moment().year();
+  if (!month || !year)
+    return res
+      .status(500)
+      .json({ message: 'error.analysis.failed_to_get_top_users' });
+
+  const currentYear = Number(year);
   const startDate = moment(month, 'MM')
     .year(currentYear)
     .startOf('month')

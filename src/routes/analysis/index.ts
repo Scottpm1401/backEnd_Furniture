@@ -1,9 +1,7 @@
 import { Router } from 'express';
 import { analysisController } from '../../controller';
-import { ValidateJoiParam } from '../../middleware/Joi';
 
 import { validateAdmin, validateToken } from '../../middleware/validate';
-import { ParamsSchema } from '../../middleware/validationSchemas';
 const router = Router();
 
 router.get(
@@ -14,18 +12,16 @@ router.get(
 );
 
 router.get(
-  '/products_purchase/:month',
+  '/products_purchase',
   validateToken,
   validateAdmin,
-  ValidateJoiParam(ParamsSchema.month),
   analysisController.getBoughtProduct
 );
 
 router.get(
-  '/top_10_users/:month',
+  '/top_10_users',
   validateToken,
   validateAdmin,
-  ValidateJoiParam(ParamsSchema.month),
   analysisController.getTop10Users
 );
 
