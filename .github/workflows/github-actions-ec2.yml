@@ -6,9 +6,14 @@ on:
     branches:
       - main
 
+env:
+  HOST_DNS: ${{ secrets.HOST_DNS }}
+  USERNAME: ${{ secrets.USERNAME }}
+  SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
 jobs:
-  deploy:
-    name: Deploy to EC2 on main branch push
+  push:
+    name: Push code to EC2
     runs-on: ubuntu-latest
 
     steps:
@@ -18,12 +23,24 @@ jobs:
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: $HOST_DNS
+          username: $USERNAME
+          key: $SSH_KEY
           script: |
             cd ~/app/backEnd_Furniture
             git pull origin main
+  build:
+    name: Build code on EC2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: $HOST_DNS
+          username: $USERNAME
+          key: $SSH_KEY
+          script: |
             cd ~/app
             docker compose stop backend
             docker compose up -d backend --build
+            docker image prune -f
