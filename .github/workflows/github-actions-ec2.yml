@@ -23,9 +23,9 @@ jobs:
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
-          host: $HOST_DNS
-          username: $USERNAME
-          key: $SSH_KEY
+          host: ${HOST_DNS}
+          username: ${USERNAME}
+          key: ${SSH_KEY}
           script: |
             cd ~/app/backEnd_Furniture
             git pull origin main
@@ -36,9 +36,9 @@ jobs:
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
         with:
-          host: $HOST_DNS
-          username: $USERNAME
-          key: $SSH_KEY
+          host: ${HOST_DNS}
+          username: ${USERNAME}
+          key: ${SSH_KEY}
           script: |
             cd ~/app
             docker compose stop backend
