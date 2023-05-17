@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on master branch push
+    name: Deploy to EC2 on main branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,8 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            cd ~/app/backEnd_Furniture
+            git pull origin main
             cd ~/app
             docker compose stop backend
             docker compose up -d backend --build
