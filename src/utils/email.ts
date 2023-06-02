@@ -4,9 +4,9 @@ const SubscriptionText = `We are delighted to welcome you to Comfysloth, the onl
 
 As a subscriber, you will receive exclusive offers, discounts, tips, and updates on our latest products and services. You will also be the first to know about our upcoming events and promotions.
 
-To start browsing our catalog, please visit our website at https://furniture-website-nu.vercel.app. You can also follow us on social media to get inspired by our designs and reviews.
+To start browsing our catalog, please visit our website at ${process.env.FE_URL}. You can also follow us on social media to get inspired by our designs and reviews.
 
-If you have any questions or feedback, please feel free to contact us at https://furniture-website-nu.vercel.app/contact or call us at +1-800-123-4567. We are always happy to hear from you and assist you with your needs.
+If you have any questions or feedback, please feel free to contact us at ${process.env.FE_URL}/contact or call us at +1-800-123-4567. We are always happy to hear from you and assist you with your needs.
 
 We hope you enjoy your Comfysloth experience and find the perfect furniture for your home.
 
