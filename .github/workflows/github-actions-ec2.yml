@@ -11,23 +11,9 @@ jobs:
     name: Pull code from Git
     runs-on: ubuntu-latest
 
-    outputs:
-      changed: ${{ steps.check_changes.outputs.changed }}
-
     steps:
       - name: Checkout the files
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 2
-
-      - name: Check for changes
-        id: check_changes
-        run: |
-          if git diff --name-only HEAD~1 ${{ github.sha }} | grep -qE '^(package\.json|\.env)$'; then
-            echo "::set-output name=changed::true"
-          else
-            echo "::set-output name=changed::false"
-          fi
 
       - name: Pull code
         uses: appleboy/ssh-action@master
@@ -44,19 +30,8 @@ jobs:
     needs: pull_code
 
     steps:
-      - name: Restart code
+      - name: Rebuild and deploy code
         uses: appleboy/ssh-action@master
-        if: needs.pull_code.outputs.changed == 'false'
-        with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/app
-            docker compose restart backend
-      - name: Executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
-        if: needs.pull_code.outputs.changed == 'true'
         with:
           host: ${{ secrets.HOST_DNS }}
           username: ${{ secrets.USERNAME }}
