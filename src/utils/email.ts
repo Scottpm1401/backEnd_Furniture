@@ -18,13 +18,13 @@ const ResetPasswordText = (token: string) => `Hello,
 
 We received a request to reset your password for your Comfysloth account. If you did not make this request, please ignore this email. Otherwise, please click the link below to set a new password:
 
-https://furniture-website-nu.vercel.app/reset_password?code=${token}
+${process.env.FE_URL}/reset_password?code=${token}
 
 This link will expire in 15 minutes.
 
 If you have any questions or need assistance, please contact us at:
 
-https://furniture-website-nu.vercel.app/contact
+${process.env.FE_URL}/contact
 
 Thank you for choosing Comfysloth for your furniture needs!
 
