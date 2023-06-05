@@ -48,11 +48,14 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     }: UpdateUserRequest = req.body;
     const findUserByUsername = await User.find({ username });
     const findUserByEmail = await User.find({ email });
-    if (findUserByEmail[0]._id.toString() !== _id)
+    if (findUserByEmail.length > 0 && findUserByEmail[0]._id.toString() !== _id)
       return res
         .status(500)
         .json({ message: 'error.auth.email_already_existed' });
-    if (findUserByUsername[0]._id.toString() !== _id)
+    if (
+      findUserByUsername.length > 0 &&
+      findUserByUsername[0]._id.toString() !== _id
+    )
       return res
         .status(500)
         .json({ message: 'error.auth.username_already_existed' });
@@ -75,6 +78,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       },
       { new: true }
     );
+
     if (!updatedUser)
       return res
         .status(500)
