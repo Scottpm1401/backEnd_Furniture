@@ -90,7 +90,7 @@ const confirmPayment = async (
             { _id: item.product_id },
             {
               $inc: {
-                storage_quantity: -1,
+                storage_quantity: -item.quantity,
               },
             },
             { new: true }
