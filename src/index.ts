@@ -6,6 +6,7 @@ import Logging from './library/Logging';
 import cors from 'cors';
 import { config } from 'dotenv';
 import { createClient } from 'redis';
+import helmet from 'helmet';
 import {
   analysisRouter,
   authRouter,
@@ -65,6 +66,7 @@ const StartServer = () => {
   /** Config cors and express body parser */
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
+  app.use(helmet());
   app.use(
     cors({
       origin: [process.env.FRONT_END_URL || '', 'http://localhost:3000'],
