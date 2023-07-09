@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import Logging from './library/Logging';
+import { inject } from '@vercel/analytics';
 
 import cors from 'cors';
 import { config } from 'dotenv';
@@ -37,12 +38,16 @@ mongoose
   })
   .catch((error) => Logging.error(error));
 
+/** Payment */
 import Stripe from 'stripe';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
   apiVersion: '2022-11-15',
   typescript: true,
 });
+
+/**Analytics */
+inject();
 
 /** Only Start Server if Mongoose Connects */
 const StartServer = () => {
