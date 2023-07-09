@@ -13,6 +13,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@vercel/analytics": "^1.0.1",
     "bcrypt": "^5.1.0",
     "chalk": "^4.1.2",
     "cloudinary": "^1.33.0",
