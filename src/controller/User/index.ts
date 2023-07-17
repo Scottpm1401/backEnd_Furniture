@@ -10,6 +10,7 @@ import {
 
 import User, { UserResponse, UserTypeModel } from '../../models/user';
 import { userSerializer } from '../../serializers';
+import { getRole, isHasPermission } from '../../utils/common';
 import { getIdFromReq } from '../../utils/token';
 
 const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -46,12 +47,18 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       email,
       password,
     }: UpdateUserRequest = req.body;
-    const findUserByUsername = await User.find({ username });
+    const userRole = getRole(req);
     const findUserByEmail = await User.find({ email });
-    if (findUserByEmail.length > 0 && findUserByEmail[0]._id.toString() !== _id)
+    if (findUserByEmail.length === 0)
+      return res.status(404).json({ message: 'error.user.not_found' });
+
+    if (!isHasPermission(userRole, findUserByEmail[0].role))
       return res
-        .status(500)
-        .json({ message: 'error.auth.email_already_existed' });
+        .status(403)
+        .json({ message: 'error.auth.do_not_have_permission' });
+
+    const findUserByUsername = await User.find({ username });
+
     if (
       findUserByUsername.length > 0 &&
       findUserByUsername[0]._id.toString() !== _id
@@ -59,6 +66,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       return res
         .status(500)
         .json({ message: 'error.auth.username_already_existed' });
+
+    if (role && !isHasPermission(userRole, role))
+      return res
+        .status(403)
+        .json({ message: 'error.user.update_role_is_higher_than_your' });
 
     const hashedPassword = password
       ? await bcrypt.hash(password, 10)
