@@ -29,7 +29,7 @@ const UserSchema = {
       .max(FORM_VALIDATE.password.max),
     birthday: Joi.string(),
     displayName: Joi.string(),
-    role: Joi.string().valid('USER', 'ADMIN'),
+    role: Joi.string().valid('USER', 'ADMIN', 'SUPER_ADMIN', 'SHIPPER'),
     info: UserInfoSchema,
   }),
   update_self: Joi.object<UpdateSelfUserRequest>({

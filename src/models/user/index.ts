@@ -31,12 +31,20 @@ export type UserType = {
   email: string;
   username: string;
   password: string;
-  role: 'ADMIN' | 'USER';
+  role: Role;
   birthday: string;
   info: UserInfoType;
   cart_total: number;
   cart: ProductCartType[];
 };
+
+export enum Role {
+  user = 'USER',
+  admin = 'ADMIN',
+  owner = 'OWNER',
+  shipper = 'SHIPPER',
+  super_admin = 'SUPER_ADMIN',
+}
 
 export type UserResponse = Omit<UserType, 'password'> & {
   _id: string;
@@ -69,7 +77,11 @@ const userSchema = new Schema(
     email: { type: String, required: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['USER', 'ADMIN'], default: 'USER' },
+    role: {
+      type: String,
+      enum: ['USER', 'ADMIN', 'OWNER', 'SHIPPER', 'SUPER_ADMIN'],
+      default: 'USER',
+    },
     birthday: { type: String, required: true },
     info: UserInfo,
     cart_total: { type: Number, default: 0 },

@@ -1,11 +1,11 @@
-import { UserInfoType } from '../../user';
+import { Role, UserInfoType } from '../../user';
 
 export type UpdateUserRequest = {
   displayName?: String;
   username?: string;
   birthday?: string;
   info?: UserInfoType;
-  role?: 'ADMIN' | 'USER';
+  role?: Role;
   email?: string;
   password?: string;
 };
