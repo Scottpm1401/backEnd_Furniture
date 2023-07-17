@@ -51,5 +51,3 @@ Function names should be start with verbs.
 - `PascalCase`: for component, component folder, type, interface.
 - `camelCase`: for global scope (available for change), component scope, function scope.
 - `UPPERCASE`: for global scope (constant not available for change), supplement with snake_case (ex: ROUTES_API)
-
-test github account
