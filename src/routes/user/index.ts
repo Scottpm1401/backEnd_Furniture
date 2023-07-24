@@ -1,13 +1,9 @@
 import { Router } from 'express';
 
-import { cartController, userController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
-import { validateAdmin, validateToken } from '../../middleware/validate';
-import {
-  CartSchema,
-  ParamsSchema,
-  UserSchema,
-} from '../../middleware/validationSchemas';
+import { cartController, userController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
+import { validateAdmin, validateToken } from 'src/middleware/validate';
+import { CartSchema, ParamsSchema, UserSchema } from 'src/middleware/validationSchemas';
 
 const router = Router();
 
@@ -49,12 +45,7 @@ router.post(
 );
 
 //Cart routes
-router.post(
-  '/cart/add',
-  validateToken,
-  ValidateJoi(CartSchema.add),
-  cartController.addToCart
-);
+router.post('/cart/add', validateToken, ValidateJoi(CartSchema.add), cartController.addToCart);
 router.post(
   '/cart/remove',
   validateToken,

@@ -1,7 +1,4 @@
-import {
-  SubscriptionModel,
-  SubscriptionResponse,
-} from '../../models/subscription';
+import { SubscriptionModel, SubscriptionResponse } from 'src/models/subscription';
 
 const subscriptionSerializer = (subscription: SubscriptionModel) => {
   const formattedSubscription: SubscriptionResponse = {
@@ -9,7 +6,7 @@ const subscriptionSerializer = (subscription: SubscriptionModel) => {
     email: subscription.email,
     name: subscription.name,
     phone: subscription.phone,
-    address: subscription.address,
+    address: subscription.address
   };
   return formattedSubscription;
 };

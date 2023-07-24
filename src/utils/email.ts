@@ -1,4 +1,4 @@
-import { sendEmail } from '../library/Mailer';
+import { sendEmail } from 'src/library/Mailer';
 
 const SubscriptionText = `We are delighted to welcome you to Comfysloth, the online store for cozy and stylish furniture. Thank you for subscribing to our newsletter and joining our community of happy customers.
 
@@ -31,17 +31,9 @@ Thank you for choosing Comfysloth for your furniture needs!
 Sincerely, The Comfysloth Team`;
 
 export const sendSubscriptionEmail = (email: string) => {
-  return sendEmail(
-    email,
-    'Thank you for subscribing to Comfysloth!',
-    SubscriptionText
-  );
+  return sendEmail(email, 'Thank you for subscribing to Comfysloth!', SubscriptionText);
 };
 
 export const sendResetPasswordEmail = (email: string, token: string) => {
-  return sendEmail(
-    email,
-    'Reset your password for Comfysloth',
-    ResetPasswordText(token)
-  );
+  return sendEmail(email, 'Reset your password for Comfysloth', ResetPasswordText(token));
 };

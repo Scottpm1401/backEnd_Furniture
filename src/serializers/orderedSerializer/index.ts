@@ -1,4 +1,4 @@
-import { PurchaseResponse, PurchaseTypeModel } from '../../models/purchase';
+import { PurchaseResponse, PurchaseTypeModel } from 'src/models/purchase';
 
 const orderedSerializer = (ordered: PurchaseTypeModel) => {
   const formattedOrdered: PurchaseResponse = {
@@ -12,7 +12,7 @@ const orderedSerializer = (ordered: PurchaseTypeModel) => {
     products: ordered.products,
     user_id: ordered.user_id,
     createdAt: ordered.createdAt,
-    updatedAt: ordered.updatedAt,
+    updatedAt: ordered.updatedAt
   };
 
   return formattedOrdered;

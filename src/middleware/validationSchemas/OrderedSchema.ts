@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { UpdateOrderedRequest } from '../../models/api/cms';
-import { BillingDetailsType } from '../../models/purchase';
-import { AddressType } from '../../models/user';
+import { UpdateOrderedRequest } from 'src/models/api/cms';
+import { BillingDetailsType } from 'src/models/purchase';
+import { AddressType } from 'src/models/user';
 
 export const BillingDetailsSchema = Joi.object<BillingDetailsType>({
   name: Joi.string().required(),
@@ -12,8 +12,8 @@ export const BillingDetailsSchema = Joi.object<BillingDetailsType>({
     city: Joi.string().required(),
     state: Joi.string().required(),
     line1: Joi.string().required(),
-    line2: Joi.string(),
-  }).required(),
+    line2: Joi.string()
+  }).required()
 });
 
 const OrderedSchema = {
@@ -22,8 +22,8 @@ const OrderedSchema = {
     arrive_date: Joi.string(),
     package_date: Joi.string(),
     total_bill: Joi.number(),
-    billingDetails: BillingDetailsSchema,
-  }),
+    billingDetails: BillingDetailsSchema
+  })
 };
 
 export default OrderedSchema;

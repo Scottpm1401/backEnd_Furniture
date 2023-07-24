@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { uploadController } from '../../controller';
-import { ValidateJoi } from '../../middleware/Joi';
+import { uploadController } from 'src/controller';
+import { ValidateJoi } from 'src/middleware/Joi';
 
-import { validateToken } from '../../middleware/validate';
-import { UploadSchema } from '../../middleware/validationSchemas';
+import { validateToken } from 'src/middleware/validate';
+import { UploadSchema } from 'src/middleware/validationSchemas';
 const router = Router();
 
 router.post(

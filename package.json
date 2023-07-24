@@ -4,10 +4,21 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "build": "npx tsc",
-    "dev": "nodemon src/index.ts",
+    "start": "TS_NODE_BASEURL=./dist node -r tsconfig-paths/register dist/index.js",
+    "build": "tsc --build",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "lint": "eslint --fix .",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "./**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -28,7 +39,9 @@
     "mongoose": "^6.6.5",
     "nodemailer": "^6.9.1",
     "redis": "^4.6.5",
-    "stripe": "^11.3.0"
+    "remove": "^0.1.5",
+    "stripe": "^11.3.0",
+    "tsc-alias": "^1.8.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -41,8 +54,20 @@
     "@types/node": "^18.8.3",
     "@types/nodemailer": "^6.4.7",
     "@types/redis": "^4.0.11",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
+    "@typescript-eslint/parser": "^6.1.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
     "nodemon": "^2.0.20",
+    "prettier": "^3.0.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "tslib": "^2.6.0",
     "typescript": "^4.8.4"
   }
 }

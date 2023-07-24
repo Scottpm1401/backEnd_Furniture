@@ -1,4 +1,4 @@
-import { TemplateModel, TemplateResponse } from '../../models/template';
+import { TemplateModel, TemplateResponse } from 'src/models/template';
 
 const templateSerializer = (template: TemplateModel) => {
   const formattedTemplate: TemplateResponse = {
@@ -10,7 +10,7 @@ const templateSerializer = (template: TemplateModel) => {
     terms_and_conditions: template.terms_and_conditions,
     privacy_policy: template.privacy_policy,
     active: template.active,
-    title: template.title,
+    title: template.title
   };
 
   return formattedTemplate;

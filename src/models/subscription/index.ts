@@ -12,7 +12,7 @@ export type SubscriptionResponse = SubscriptionType & {
   _id: string;
 };
 
-export type SubscriptionModel = {} & SubscriptionType & Document;
+export type SubscriptionModel = SubscriptionType & Document;
 
 /*******************************SCHEMA*****************************/
 const subscriptionSchema = new Schema(
@@ -20,7 +20,7 @@ const subscriptionSchema = new Schema(
     email: { type: String, required: true },
     phone: String,
     name: String,
-    address: String,
+    address: String
   },
   { timestamps: true }
 );

@@ -1,9 +1,6 @@
 import Joi from 'joi';
-import {
-  CreateTemplateRequest,
-  UpdateTemplateRequest,
-} from '../../models/api/cms';
-import { BannerType, ContentType } from '../../models/template';
+import { CreateTemplateRequest, UpdateTemplateRequest } from 'src/models/api/cms';
+import { BannerType, ContentType } from 'src/models/template';
 
 const ContentsSchema = Joi.array<ContentType[]>()
   .min(1)
@@ -11,7 +8,7 @@ const ContentsSchema = Joi.array<ContentType[]>()
     Joi.object<ContentType>({
       lang: Joi.string().valid('en', 'vi').required(),
       content: Joi.string().required(),
-      _id: Joi.string(),
+      _id: Joi.string()
     })
   );
 
@@ -19,7 +16,7 @@ const BannerSchema = Joi.object<BannerType>({
   _id: Joi.string(),
   image: Joi.string().required(),
   title: ContentsSchema,
-  description: ContentsSchema,
+  description: ContentsSchema
 });
 
 const TemplateSchema = {
@@ -30,7 +27,7 @@ const TemplateSchema = {
     contact: ContentsSchema.required(),
     terms_and_conditions: ContentsSchema.required(),
     privacy_policy: ContentsSchema.required(),
-    title: Joi.string().required(),
+    title: Joi.string().required()
   }),
   update: Joi.object<UpdateTemplateRequest>({
     banners: Joi.array<BannerType[]>().min(1).items(BannerSchema),
@@ -39,8 +36,8 @@ const TemplateSchema = {
     contact: ContentsSchema,
     terms_and_conditions: ContentsSchema,
     privacy_policy: ContentsSchema,
-    title: Joi.string(),
-  }),
+    title: Joi.string()
+  })
 };
 
 export default TemplateSchema;

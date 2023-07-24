@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Role } from '../models/user';
+import { Role } from 'src/models/user';
 import { parseJwt } from './token';
 
 export const isOwner = (req: Request) => {
@@ -38,11 +38,7 @@ export const isHasPermission = (role: Role, compare_role: Role) => {
   if (role === compare_role) return true;
   if (role === Role.owner) return true;
   if (role === Role.super_admin && compare_role !== Role.owner) return true;
-  if (
-    role === Role.admin &&
-    compare_role !== Role.owner &&
-    compare_role !== Role.super_admin
-  )
+  if (role === Role.admin && compare_role !== Role.owner && compare_role !== Role.super_admin)
     return true;
   return false;
 };

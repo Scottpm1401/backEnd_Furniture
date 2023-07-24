@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { ProductRatingRequest } from '../../models/api/product';
-import { ProductType } from '../../models/product';
+import { ProductRatingRequest } from 'src/models/api/product';
+import { ProductType } from 'src/models/product';
 
 const ProductSchema = {
   create: Joi.object<ProductType>({
@@ -13,7 +13,7 @@ const ProductSchema = {
     price: Joi.number().required(),
     sku: Joi.string().required(),
     storage_quantity: Joi.number().integer().required(),
-    colors: Joi.array().min(1).items(Joi.string()),
+    colors: Joi.array().min(1).items(Joi.string())
   }),
   update: Joi.object<ProductType>({
     img: Joi.string(),
@@ -25,13 +25,13 @@ const ProductSchema = {
     price: Joi.number(),
     sku: Joi.string(),
     storage_quantity: Joi.number().integer(),
-    colors: Joi.array().min(1).items(Joi.string()),
+    colors: Joi.array().min(1).items(Joi.string())
   }),
   rating: Joi.object<ProductRatingRequest>({
     rate: Joi.number().min(1).max(5).required(),
     purchase_id: Joi.string().required(),
-    color: Joi.string().required(),
-  }),
+    color: Joi.string().required()
+  })
 };
 
 export default ProductSchema;

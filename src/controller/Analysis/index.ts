@@ -1,18 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import moment from 'moment';
-import {
-  BoughtProduct,
-  Revenue,
-  RevenuePerMonth,
-  TopUser,
-} from '../../models/analysis';
-import Purchase from '../../models/purchase';
+import { BoughtProduct, Revenue, RevenuePerMonth, TopUser } from 'src/models/analysis';
+import Purchase from 'src/models/purchase';
 
-const getRevenuePerMonth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getRevenuePerMonth = async (req: Request, res: Response) => {
   try {
     // Calculate the start date for the past 5 years
     const startDate = moment().toDate();
@@ -22,47 +13,44 @@ const getRevenuePerMonth = async (
     const revenuePerMonth: RevenuePerMonth[] = await Purchase.aggregate([
       {
         $match: {
-          createdAt: { $gte: startDate },
-        },
+          createdAt: { $gte: startDate }
+        }
       },
       {
         $group: {
           _id: {
             year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' },
+            month: { $month: '$createdAt' }
           },
-          revenue: { $sum: '$total_bill' },
-        },
+          revenue: { $sum: '$total_bill' }
+        }
       },
       {
         $project: {
           _id: 0,
           year: '$_id.year',
           month: '$_id.month',
-          revenue: 1,
-        },
+          revenue: 1
+        }
       },
       {
         $sort: {
           year: 1,
-          month: 1,
-        },
-      },
+          month: 1
+        }
+      }
     ]);
 
     // Reshape the result to match the desired format
-    const revenuePerYear = revenuePerMonth.reduce(
-      (acc: Revenue[], { year, month, revenue }) => {
-        const yearData = acc.find((data) => data.year === year);
-        if (yearData) {
-          yearData.data.push({ month, revenue });
-        } else {
-          acc.push({ year, data: [{ month, revenue }] });
-        }
-        return acc;
-      },
-      []
-    );
+    const revenuePerYear = revenuePerMonth.reduce((acc: Revenue[], { year, month, revenue }) => {
+      const yearData = acc.find((data) => data.year === year);
+      if (yearData) {
+        yearData.data.push({ month, revenue });
+      } else {
+        acc.push({ year, data: [{ month, revenue }] });
+      }
+      return acc;
+    }, []);
 
     res.json(revenuePerYear);
   } catch (err) {
@@ -70,51 +58,37 @@ const getRevenuePerMonth = async (
   }
 };
 
-const getBoughtProduct = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getBoughtProduct = async (req: Request, res: Response) => {
   try {
     const month = req.query.month?.toString();
     const year = req.query.year?.toString();
 
     if (!month || !year)
-      return res
-        .status(500)
-        .json({ message: 'error.analysis.failed_to_get_bought_products' });
+      return res.status(500).json({ message: 'error.analysis.failed_to_get_bought_products' });
 
     const currentYear = Number(year);
-    const startDate = moment(month, 'MM')
-      .year(currentYear)
-      .startOf('month')
-      .toDate();
-    const endDate = moment(month, 'MM')
-      .year(currentYear)
-      .endOf('month')
-      .toDate();
+    const startDate = moment(month, 'MM').year(currentYear).startOf('month').toDate();
+    const endDate = moment(month, 'MM').year(currentYear).endOf('month').toDate();
 
     const purchases = await Purchase.find({
       createdAt: {
         $gte: startDate,
-        $lt: endDate,
-      },
+        $lt: endDate
+      }
     });
 
     const boughtProducts: BoughtProduct[] = [];
 
     purchases.forEach((purchase) => {
       purchase.products.forEach((product) => {
-        const index = boughtProducts.findIndex(
-          (item) => item.product_id === product.product_id
-        );
+        const index = boughtProducts.findIndex((item) => item.product_id === product.product_id);
         if (index !== -1) {
           boughtProducts[index].num_of_purchase += product.quantity;
         } else {
           boughtProducts.push({
             product_id: product.product_id,
             title: product.title,
-            num_of_purchase: product.quantity,
+            num_of_purchase: product.quantity
           });
         }
       });
@@ -126,32 +100,23 @@ const getBoughtProduct = async (
   }
 };
 
-const getTop10Users = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getTop10Users = async (req: Request, res: Response) => {
   const month = req.query.month?.toString();
   const year = req.query.year?.toString();
 
   if (!month || !year)
-    return res
-      .status(500)
-      .json({ message: 'error.analysis.failed_to_get_top_users' });
+    return res.status(500).json({ message: 'error.analysis.failed_to_get_top_users' });
 
   const currentYear = Number(year);
-  const startDate = moment(month, 'MM')
-    .year(currentYear)
-    .startOf('month')
-    .toDate();
+  const startDate = moment(month, 'MM').year(currentYear).startOf('month').toDate();
   const endDate = moment(month, 'MM').year(currentYear).endOf('month').toDate();
 
   try {
     const topUsers: TopUser[] = await Purchase.aggregate([
       {
         $match: {
-          createdAt: { $gte: startDate, $lte: endDate },
-        },
+          createdAt: { $gte: startDate, $lte: endDate }
+        }
       },
       {
         $group: {
@@ -160,11 +125,11 @@ const getTop10Users = async (
           email: { $first: '$billingDetails.email' },
           phone: { $first: '$billingDetails.phone' },
           paid: { $sum: '$total_bill' },
-          bought_products_quantity: { $sum: { $size: '$products' } },
-        },
+          bought_products_quantity: { $sum: { $size: '$products' } }
+        }
       },
       { $sort: { paid: -1 } },
-      { $limit: 10 },
+      { $limit: 10 }
     ]);
 
     res.json(topUsers);

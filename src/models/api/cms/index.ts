@@ -1,6 +1,6 @@
-import { BillingDetailsType, PurchaseStatus } from '../../purchase';
-import { SubscriptionType } from '../../subscription';
-import { TemplateType } from '../../template';
+import { BillingDetailsType, PurchaseStatus } from 'src/models/purchase';
+import { SubscriptionType } from 'src/models/subscription';
+import { TemplateType } from 'src/models/template';
 
 export type CMSList<T> = {
   total: number;

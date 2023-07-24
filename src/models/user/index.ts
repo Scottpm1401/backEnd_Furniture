@@ -1,12 +1,12 @@
 import { Schema, model, Document } from 'mongoose';
-import { ProductCart, ProductCartType } from '../cart';
+import { ProductCart, ProductCartType } from 'src/models/cart';
 
 /*********************TYPE & INTERFACE*****************************/
 
 export enum Gender {
   Male = 'MALE',
   Female = 'FEMALE',
-  other = 'OTHER',
+  other = 'OTHER'
 }
 
 export type UserInfoType = {
@@ -43,14 +43,14 @@ export enum Role {
   admin = 'ADMIN',
   owner = 'OWNER',
   shipper = 'SHIPPER',
-  super_admin = 'SUPER_ADMIN',
+  super_admin = 'SUPER_ADMIN'
 }
 
 export type UserResponse = Omit<UserType, 'password'> & {
   _id: string;
 };
 
-export type UserTypeModel = {} & UserType & Document;
+export type UserTypeModel = UserType & Document;
 
 /*******************************SCHEMA*****************************/
 
@@ -59,7 +59,7 @@ export const Address = {
   city: String,
   state: String,
   line1: String,
-  line2: String,
+  line2: String
 };
 
 export const UserInfo = {
@@ -68,7 +68,7 @@ export const UserInfo = {
   phone: String,
   sex: { type: String, enum: ['MALE', 'FEMALE', 'OTHER'] },
   avatar: String,
-  address: Address,
+  address: Address
 };
 
 const userSchema = new Schema(
@@ -80,12 +80,12 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ['USER', 'ADMIN', 'OWNER', 'SHIPPER', 'SUPER_ADMIN'],
-      default: 'USER',
+      default: 'USER'
     },
     birthday: { type: String, required: true },
     info: UserInfo,
     cart_total: { type: Number, default: 0 },
-    cart: [ProductCart],
+    cart: [ProductCart]
   },
   { timestamps: true }
 );

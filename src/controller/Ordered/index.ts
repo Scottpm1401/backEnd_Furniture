@@ -1,25 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { FilterQuery } from 'mongoose';
-import { CMSList, UpdateOrderedRequest } from '../../models/api/cms';
-import Purchase, {
-  PurchaseResponse,
-  PurchaseTypeModel,
-} from '../../models/purchase';
-import { orderedSerializer } from '../../serializers';
-import { getIdFromReq } from '../../utils/token';
+import { CMSList, UpdateOrderedRequest } from 'src/models/api/cms';
+import Purchase, { PurchaseResponse, PurchaseTypeModel } from 'src/models/purchase';
+import { orderedSerializer } from 'src/serializers';
+import { getIdFromReq } from 'src/utils/token';
 
-const getOrderedList = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getOrderedList = async (req: Request, res: Response) => {
   try {
     const { offset, limit, search } = req.query;
-    const searchFilter = search
-      ? { $text: { $search: search.toString() } }
-      : {};
+    const searchFilter = search ? { $text: { $search: search.toString() } } : {};
     const filter: FilterQuery<PurchaseTypeModel> = {
-      ...searchFilter,
+      ...searchFilter
     };
 
     const ordered = await Purchase.find(filter)
@@ -30,23 +21,17 @@ const getOrderedList = async (
 
     const formattedOrdered = ordered.map((order) => orderedSerializer(order));
 
-    return res
-      .status(200)
-      .json({ data: formattedOrdered, total } as CMSList<PurchaseResponse[]>);
+    return res.status(200).json({ data: formattedOrdered, total } as CMSList<PurchaseResponse[]>);
   } catch (err) {
     return res.status(500).json({ message: err });
   }
 };
 
-const getSelfOrdered = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getSelfOrdered = async (req: Request, res: Response) => {
   try {
     const _id = getIdFromReq(req);
     const ordered = await Purchase.find({ user_id: _id }).sort({
-      createdAt: -1,
+      createdAt: -1
     });
 
     const formattedOrdered = ordered.map((order) => orderedSerializer(order));
@@ -58,7 +43,7 @@ const getSelfOrdered = async (
   }
 };
 
-const getOrdered = async (req: Request, res: Response, next: NextFunction) => {
+const getOrdered = async (req: Request, res: Response) => {
   try {
     const _id = req.params.id;
     const purchase = await Purchase.findById(_id);
@@ -69,20 +54,11 @@ const getOrdered = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const updateOrdered = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const updateOrdered = async (req: Request, res: Response) => {
   try {
     const _id = req.params.id;
-    const {
-      status,
-      arrive_date,
-      package_date,
-      total_bill,
-      billingDetails,
-    }: UpdateOrderedRequest = req.body;
+    const { status, arrive_date, package_date, total_bill, billingDetails }: UpdateOrderedRequest =
+      req.body;
 
     const updatedPurchase = await Purchase.findOneAndUpdate(
       { _id },
@@ -92,24 +68,17 @@ const updateOrdered = async (
           arrive_date,
           package_date,
           total_bill,
-          billingDetails,
-        },
+          billingDetails
+        }
       },
       { new: true }
     );
     if (!updatedPurchase)
-      return res
-        .status(500)
-        .json({ message: 'error.purchase.failed_to_update' });
+      return res.status(500).json({ message: 'error.purchase.failed_to_update' });
     return res.status(200).json(orderedSerializer(updatedPurchase));
   } catch (err) {
     return res.status(500).json({ message: err });
   }
 };
 
-export default {
-  getOrdered,
-  getOrderedList,
-  getSelfOrdered,
-  updateOrdered,
-};
+export default { getOrdered, getOrderedList, getSelfOrdered, updateOrdered };

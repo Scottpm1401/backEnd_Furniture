@@ -30,14 +30,14 @@ export type ContentType = {
 
 export enum Language {
   vietnam = 'vi',
-  english = 'en',
+  english = 'en'
 }
 
 export type TemplateResponse = TemplateType & {
   _id: string;
 };
 
-export type TemplateModel = {} & TemplateType & Document;
+export type TemplateModel = TemplateType & Document;
 
 /*******************************SCHEMA*****************************/
 
@@ -50,17 +50,16 @@ export const Content = {
       validator: function (v: string) {
         return langCodeReg.test(v);
       },
-      message: ((props) =>
-        `${props.value} is not a valid language code!`) as ValidatorMessageFn,
-    },
+      message: ((props) => `${props.value} is not a valid language code!`) as ValidatorMessageFn
+    }
   },
-  content: { type: String, required: true },
+  content: { type: String, required: true }
 };
 
 export const Banner = {
   image: { type: String, required: true },
   title: { type: [Content], required: true },
-  description: { type: [Content], required: true },
+  description: { type: [Content], required: true }
 };
 
 const templateSchema = new Schema(
@@ -72,7 +71,7 @@ const templateSchema = new Schema(
     terms_and_conditions: { type: [Content], default: [] },
     privacy_policy: { type: [Content], default: [] },
     active: { type: Boolean, default: false },
-    title: { type: String, required: true },
+    title: { type: String, required: true }
   },
   { timestamps: true }
 );

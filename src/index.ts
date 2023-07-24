@@ -1,13 +1,13 @@
-import express from 'express';
 import http from 'http';
-import mongoose from 'mongoose';
-import Logging from './library/Logging';
 import { inject } from '@vercel/analytics';
-
 import cors from 'cors';
 import { config } from 'dotenv';
-import { createClient } from 'redis';
+import express from 'express';
 import helmet from 'helmet';
+import mongoose from 'mongoose';
+import { createClient } from 'redis';
+import Stripe from 'stripe';
+import Logging from './library/Logging';
 import {
   analysisRouter,
   authRouter,
@@ -17,13 +17,13 @@ import {
   subscriptionRouter,
   templateRouter,
   uploadRouter,
-  userRouter,
+  userRouter
 } from './routes';
 
 const app = express();
 config();
 const client = createClient({
-  url: process.env.REDIS,
+  url: process.env.REDIS
 });
 /** Connect to Mongo */
 mongoose
@@ -39,11 +39,10 @@ mongoose
   .catch((error) => Logging.error(error));
 
 /** Payment */
-import Stripe from 'stripe';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', {
   apiVersion: '2022-11-15',
-  typescript: true,
+  typescript: true
 });
 
 /**Analytics */
@@ -82,8 +81,8 @@ const StartServer = () => {
         'X-Requested-With',
         'X-HTTP-Method-Override',
         'Accept',
-        'Authorization',
-      ],
+        'Authorization'
+      ]
     })
   );
   app.set('trust proxy', 1);
@@ -97,10 +96,7 @@ const StartServer = () => {
     );
 
     if (req.method == 'OPTIONS') {
-      res.header(
-        'Access-Control-Allow-Methods',
-        'PUT, POST, PATCH, DELETE, GET'
-      );
+      res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
       return res.status(200).json({});
     }
 
@@ -110,15 +106,12 @@ const StartServer = () => {
   /** Redis Cache */
   app.use(async (req, res, next) => {
     const key = req.originalUrl;
-    try {
-      const data = await client.get(key);
-      if (data !== null) {
-        res.send(data);
-      } else {
-        next();
-      }
-    } catch (err) {
-      throw err;
+
+    const data = await client.get(key);
+    if (data !== null) {
+      res.send(data);
+    } else {
+      next();
     }
   });
   /** Cookie */
@@ -136,18 +129,16 @@ const StartServer = () => {
   app.use('/subscription', subscriptionRouter);
 
   /** Healthcheck */
-  app.get('/ping', (req, res, next) =>
-    res.status(200).json({ message: 'pung' })
-  );
+  app.get('/ping', (req, res) => res.status(200).json({ message: 'pung' }));
 
   /** Error handling */
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     const error = new Error('Not found');
 
     Logging.error(error);
 
     res.status(404).json({
-      message: error.message,
+      message: error.message
     });
   });
 

@@ -6,7 +6,7 @@ export enum ProductSort {
   price_asc = 'PRICE_ASC',
   price_des = 'PRICE_DES',
   name_asc = 'NAME_ASC',
-  name_des = 'NAME_DES',
+  name_des = 'NAME_DES'
 }
 
 export type RatingType = {
@@ -40,20 +40,20 @@ export type ProductResponse = ProductType & {
   _id: string;
 };
 
-export type ProductTypeModel = {} & ProductType & Document;
+export type ProductTypeModel = ProductType & Document;
 
 /*******************************SCHEMA*****************************/
 
 export const Rating = {
   rate: Number,
-  num_of_rate: Number,
+  num_of_rate: Number
 };
 
 export const Review = {
   user_id: String,
   username: String,
   email: String,
-  phone: String,
+  phone: String
 };
 
 const productSchema = new Schema(
@@ -69,7 +69,7 @@ const productSchema = new Schema(
     price: { type: Number, required: true },
     sku: { type: String, required: true },
     storage_quantity: { type: Number, default: 0 },
-    colors: { type: [String], default: [] },
+    colors: { type: [String], default: [] }
   },
   { timestamps: true }
 );

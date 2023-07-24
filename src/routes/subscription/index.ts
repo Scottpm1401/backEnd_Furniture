@@ -1,27 +1,14 @@
 import { Router } from 'express';
-import { subscriptionController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
-import { validateAdmin, validateToken } from '../../middleware/validate';
-import {
-  ParamsSchema,
-  SubscriptionSchema,
-} from '../../middleware/validationSchemas';
+import { subscriptionController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
+import { validateAdmin, validateToken } from 'src/middleware/validate';
+import { ParamsSchema, SubscriptionSchema } from 'src/middleware/validationSchemas';
 
 const router = Router();
 
-router.get(
-  '/all',
-  validateToken,
-  validateAdmin,
-  subscriptionController.getSubscriptions
-);
+router.get('/all', validateToken, validateAdmin, subscriptionController.getSubscriptions);
 
-router.get(
-  '/get/:id',
-  validateToken,
-  validateAdmin,
-  subscriptionController.getSubscription
-);
+router.get('/get/:id', validateToken, validateAdmin, subscriptionController.getSubscription);
 
 router.post(
   '/update/:id',

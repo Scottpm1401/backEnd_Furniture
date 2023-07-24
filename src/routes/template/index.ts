@@ -1,22 +1,14 @@
 import { Router } from 'express';
 
-import { templateController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
-import { validateAdmin, validateToken } from '../../middleware/validate';
-import {
-  ParamsSchema,
-  TemplateSchema,
-} from '../../middleware/validationSchemas';
+import { templateController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
+import { validateAdmin, validateToken } from 'src/middleware/validate';
+import { ParamsSchema, TemplateSchema } from 'src/middleware/validationSchemas';
 const router = Router();
 
 router.get('/current', templateController.currentTemplate);
 
-router.get(
-  '/all',
-  validateToken,
-  validateAdmin,
-  templateController.getAllTemplates
-);
+router.get('/all', validateToken, validateAdmin, templateController.getAllTemplates);
 
 router.get(
   '/get/:id',

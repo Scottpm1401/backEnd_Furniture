@@ -1,4 +1,4 @@
-import { ProductResponse, ProductTypeModel } from '../../models/product';
+import { ProductResponse, ProductTypeModel } from 'src/models/product';
 
 const productSerializer = (product: ProductTypeModel) => {
   const formattedProduct: ProductResponse = {
@@ -14,7 +14,7 @@ const productSerializer = (product: ProductTypeModel) => {
     price: product.price,
     sku: product.sku,
     storage_quantity: product.storage_quantity,
-    colors: product.colors,
+    colors: product.colors
   };
 
   return formattedProduct;

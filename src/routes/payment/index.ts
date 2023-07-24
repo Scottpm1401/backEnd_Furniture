@@ -1,12 +1,9 @@
 import { Router } from 'express';
-import { paymentController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
+import { paymentController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
 
-import { validateToken } from '../../middleware/validate';
-import {
-  ParamsSchema,
-  PaymentSchema,
-} from '../../middleware/validationSchemas';
+import { validateToken } from 'src/middleware/validate';
+import { ParamsSchema, PaymentSchema } from 'src/middleware/validationSchemas';
 const router = Router();
 
 router.post(

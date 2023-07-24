@@ -1,27 +1,15 @@
 import { Router } from 'express';
-import { productController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
+import { productController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
 
-import { validateAdmin, validateToken } from '../../middleware/validate';
-import {
-  ParamsSchema,
-  ProductSchema,
-} from '../../middleware/validationSchemas';
+import { validateAdmin, validateToken } from 'src/middleware/validate';
+import { ParamsSchema, ProductSchema } from 'src/middleware/validationSchemas';
 const router = Router();
 
 router.get('/all', productController.getAllProducts);
-router.get(
-  '/get/:id',
-  ValidateJoiParam(ParamsSchema.common),
-  productController.getProduct
-);
+router.get('/get/:id', ValidateJoiParam(ParamsSchema.common), productController.getProduct);
 router.get('/featured', productController.getFeaturedProducts);
-router.get(
-  '/cms_all',
-  validateToken,
-  validateAdmin,
-  productController.getCmsAllProducts
-);
+router.get('/cms_all', validateToken, validateAdmin, productController.getCmsAllProducts);
 router.post(
   '/create',
   validateToken,

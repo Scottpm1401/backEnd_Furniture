@@ -19,5 +19,5 @@ export const ProductCart = {
   color: { type: String, required: true },
   quantity: { type: Number, required: true },
   brand: { type: String, required: true },
-  category: { type: String, required: true },
+  category: { type: String, required: true }
 };

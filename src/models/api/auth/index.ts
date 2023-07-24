@@ -30,7 +30,7 @@ export type SignupRequest = {
   birthday: string;
 };
 
-export type SignupResponse = {} & LoginResponse;
+export type SignupResponse = LoginResponse;
 
 export type LogoutRequest = {
   refreshToken: string;

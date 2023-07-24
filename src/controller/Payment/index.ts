@@ -1,20 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { round } from 'lodash';
 import moment from 'moment';
+import { stripe } from 'src/..';
+import { CheckoutRequest, CheckoutResponse, ConfirmPaymentRequest } from 'src/models/api/payment';
+import Product from 'src/models/product';
+import Purchase from 'src/models/purchase';
+import User from 'src/models/user';
+import { orderedSerializer } from 'src/serializers';
+import { getIdFromReq } from 'src/utils/token';
 import Stripe from 'stripe';
-import { stripe } from '../..';
-import {
-  CheckoutRequest,
-  CheckoutResponse,
-  ConfirmPaymentRequest,
-} from '../../models/api/payment';
-import Product from '../../models/product';
-import Purchase from '../../models/purchase';
-import User from '../../models/user';
-import { orderedSerializer } from '../../serializers';
-import { getIdFromReq } from '../../utils/token';
 
-const checkout = async (req: Request, res: Response, next: NextFunction) => {
+const checkout = async (req: Request, res: Response) => {
   try {
     const user_id = getIdFromReq(req);
     const { paymentMethodType, currency }: CheckoutRequest = req.body;
@@ -27,7 +23,7 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
       amount: round(user.cart_total * 100), //api count by cent (100cent = $1)
       currency: currency ?? 'usd',
       description: `name: ${user.username}, email: ${user.email}`,
-      payment_method_types: [paymentMethodType],
+      payment_method_types: [paymentMethodType]
     };
     // If this is for an ACSS payment, we add payment_method_options to create
     // the Mandate.
@@ -36,24 +32,22 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
         acss_debit: {
           mandate_options: {
             payment_schedule: 'sporadic',
-            transaction_type: 'personal',
-          },
-        },
+            transaction_type: 'personal'
+          }
+        }
       };
     } else if (paymentMethodType === 'customer_balance') {
       params.payment_method_data = {
-        type: 'customer_balance',
+        type: 'customer_balance'
       } as any;
       params.confirm = true;
-      params.customer =
-        user_id || (await stripe.customers.create().then((data) => data.id));
+      params.customer = user_id || (await stripe.customers.create().then((data) => data.id));
     }
 
-    const paymentIntent: Stripe.PaymentIntent =
-      await stripe.paymentIntents.create(params);
+    const paymentIntent: Stripe.PaymentIntent = await stripe.paymentIntents.create(params);
     const resData: CheckoutResponse = {
       clientSecret: paymentIntent.client_secret,
-      nextAction: paymentIntent.next_action,
+      nextAction: paymentIntent.next_action
     };
     return res.status(200).json(resData);
   } catch (err) {
@@ -61,11 +55,7 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const confirmPayment = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const confirmPayment = async (req: Request, res: Response) => {
   try {
     const user_id = getIdFromReq(req);
     const { payment_method, billing_details }: ConfirmPaymentRequest = req.body;
@@ -79,7 +69,7 @@ const confirmPayment = async (
         payment_method: payment.card?.brand || '',
         package_date: moment().format(),
         billingDetails: billing_details,
-        products: user.cart,
+        products: user.cart
       });
 
       const savedPurchase = await purchase.save();
@@ -90,8 +80,8 @@ const confirmPayment = async (
             { _id: item.product_id },
             {
               $inc: {
-                storage_quantity: -item.quantity,
-              },
+                storage_quantity: -item.quantity
+              }
             },
             { new: true }
           );
@@ -100,15 +90,11 @@ const confirmPayment = async (
 
         await Promise.all(updatedProductsReq);
 
-        const formattedOrdered = userOrdered.map((order) =>
-          orderedSerializer(order)
-        );
+        const formattedOrdered = userOrdered.map((order) => orderedSerializer(order));
 
         return res.status(200).json(formattedOrdered);
       } else {
-        return res
-          .status(500)
-          .json({ message: 'error.user.cart.failed_to_checkout' });
+        return res.status(500).json({ message: 'error.user.cart.failed_to_checkout' });
       }
     } else {
       return res.status(404).json({ message: 'error.user.not_found' });
@@ -118,21 +104,15 @@ const confirmPayment = async (
   }
 };
 
-const productCheck = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const productCheck = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const quantity: number = req.body.quantity;
     const product = await Product.findById(id);
 
-    if (!product)
-      return res.status(404).json({ message: 'error.product.not_found' });
+    if (!product) return res.status(404).json({ message: 'error.product.not_found' });
 
-    if (product.storage_quantity < quantity)
-      return res.status(200).json({ success: false });
+    if (product.storage_quantity < quantity) return res.status(200).json({ success: false });
     return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(500).json({ message: err });

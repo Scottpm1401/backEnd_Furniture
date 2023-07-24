@@ -1,7 +1,7 @@
-import { Role, UserInfoType } from '../../user';
+import { Role, UserInfoType } from 'src/models/user';
 
 export type UpdateUserRequest = {
-  displayName?: String;
+  displayName?: string;
   username?: string;
   birthday?: string;
   info?: UserInfoType;
@@ -11,7 +11,7 @@ export type UpdateUserRequest = {
 };
 
 export type UpdateSelfUserRequest = {
-  displayName?: String;
+  displayName?: string;
   username?: string;
   birthday?: string;
   info?: UserInfoType;

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import mongoose from 'mongoose';
@@ -9,34 +9,29 @@ import {
   LoginRequest,
   LogoutRequest,
   RefreshTokenRequest,
-  ResetPasswordRequest,
-} from '../../models/api/auth';
-import User, { UserType } from '../../models/user';
-import { sendResetPasswordEmail } from '../../utils/email';
+  ResetPasswordRequest
+} from 'src/models/api/auth';
+import User, { UserType } from 'src/models/user';
+import { sendResetPasswordEmail } from 'src/utils/email';
 import {
   generateCode,
   getIdFromReq,
   parseJwt,
   resetPasswordTokenGen,
-  tokenGen,
-} from '../../utils/token';
+  tokenGen
+} from 'src/utils/token';
 
 let refreshTokens: string[] = [];
 
-const signup = async (req: Request, res: Response, next: NextFunction) => {
+const signup = async (req: Request, res: Response) => {
   try {
-    const { displayName, email, username, password, birthday }: UserType =
-      req.body;
+    const { displayName, email, username, password, birthday }: UserType = req.body;
     const findUserByEmail = await User.find({ email });
     const findUserByUsername = await User.find({ username });
     if (findUserByEmail.length > 0)
-      return res
-        .status(500)
-        .json({ message: 'error.auth.email_already_existed' });
+      return res.status(500).json({ message: 'error.auth.email_already_existed' });
     if (findUserByUsername.length > 0)
-      return res
-        .status(500)
-        .json({ message: 'error.auth.username_already_existed' });
+      return res.status(500).json({ message: 'error.auth.username_already_existed' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const _id = new mongoose.Types.ObjectId();
@@ -48,7 +43,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       password: hashedPassword,
       birthday,
       info: undefined,
-      cart: [],
+      cart: []
     });
     const savedUser = await user.save();
     if (savedUser) {
@@ -56,59 +51,43 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
       const token = tokenGen({ _id: _id.toString(), role: savedUser.role }, 7);
       const refreshToken = tokenGen({ _id: _id.toString() }, 30);
       refreshTokens.push(refreshToken);
-      return res
-        .status(201)
-        .json({ accessToken: token, expiredDate, refreshToken });
+      return res.status(201).json({ accessToken: token, expiredDate, refreshToken });
     } else {
-      return res
-        .status(500)
-        .json({ message: 'error.auth.user_already_existed' });
+      return res.status(500).json({ message: 'error.auth.user_already_existed' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
   }
 };
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response) => {
   try {
     const { email, username, password }: LoginRequest = req.body;
-    const findUser = username
-      ? await User.find({ username })
-      : await User.find({ email });
+    const findUser = username ? await User.find({ username }) : await User.find({ email });
     if (findUser.length > 0) {
       const user = findUser[0];
       const compare = await bcrypt.compare(password, user.password);
       if (compare) {
         const expiredDate = moment().add(7, 'days').format();
-        const token = tokenGen(
-          { _id: user._id.toString(), role: user.role },
-          7
-        );
+        const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
         const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
         refreshTokens.push(refreshToken);
-        return res
-          .status(200)
-          .json({ accessToken: token, expiredDate, refreshToken });
+        return res.status(200).json({ accessToken: token, expiredDate, refreshToken });
       } else {
-        return res
-          .status(500)
-          .json({ message: 'error.auth.incorrect_password' });
+        return res.status(500).json({ message: 'error.auth.incorrect_password' });
       }
     } else {
-      return res
-        .status(500)
-        .json({ message: 'error.auth.invalid_email_username' });
+      return res.status(500).json({ message: 'error.auth.invalid_email_username' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
   }
 };
 
-const logout = (req: Request, res: Response, next: NextFunction) => {
+const logout = (req: Request, res: Response) => {
   try {
     const { refreshToken }: LogoutRequest = req.body;
-    if (refreshToken)
-      refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+    if (refreshToken) refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 
     return res.status(200).json({ success: true });
   } catch (err) {
@@ -116,11 +95,7 @@ const logout = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const changePassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const changePassword = async (req: Request, res: Response) => {
   try {
     const _id = getIdFromReq(req);
     const { password, newPassword }: ChangePasswordRequest = req.body;
@@ -136,25 +111,17 @@ const changePassword = async (
         );
         if (updatedUser) {
           const expiredDate = moment().add(7, 'days').format();
-          const token = tokenGen(
-            { _id: user._id.toString(), role: user.role },
-            7
-          );
+          const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
           const refreshToken = tokenGen({ _id: user._id.toString() }, 30);
           refreshTokens.push(refreshToken);
           return res.status(200).json({
             accessToken: token,
             expiredDate,
-            refreshToken,
+            refreshToken
           });
-        } else
-          res
-            .status(500)
-            .json({ message: 'error.user.failed_to_change_password' });
+        } else res.status(500).json({ message: 'error.user.failed_to_change_password' });
       } else {
-        return res
-          .status(500)
-          .json({ message: 'error.auth.incorrect_password' });
+        return res.status(500).json({ message: 'error.auth.incorrect_password' });
       }
     }
     return res.status(500).json({ message: 'error.user.not_found' });
@@ -163,16 +130,11 @@ const changePassword = async (
   }
 };
 
-const forgotPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const forgotPassword = async (req: Request, res: Response) => {
   try {
     const { email }: ForgotPasswordRequest = req.body;
     const user = await User.find({ email });
-    if (user.length < 1)
-      return res.status(500).json({ message: 'error.user.not_found' });
+    if (user.length < 1) return res.status(500).json({ message: 'error.user.not_found' });
     const code = generateCode();
     const token = resetPasswordTokenGen(email, code);
     await sendResetPasswordEmail(email, token);
@@ -182,16 +144,11 @@ const forgotPassword = async (
   }
 };
 
-const resetPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const resetPassword = async (req: Request, res: Response) => {
   try {
     const { token, password }: ResetPasswordRequest = req.body;
 
-    if (!token)
-      return res.status(401).json({ message: 'error.auth.access_denied' });
+    if (!token) return res.status(401).json({ message: 'error.auth.access_denied' });
 
     jwt.verify(token, process.env.JWT_KEY || '');
 
@@ -201,37 +158,26 @@ const resetPassword = async (
       { email },
       {
         $set: {
-          password: hashedPassword,
-        },
+          password: hashedPassword
+        }
       },
       { new: true }
     );
-    if (!user)
-      return res
-        .status(500)
-        .json({ message: 'error.auth.failed_to_reset_password' });
+    if (!user) return res.status(500).json({ message: 'error.auth.failed_to_reset_password' });
     return res.status(200).json({ success: true });
   } catch (err) {
     return res.status(401).json({ message: 'error.auth.invalid_token' });
   }
 };
 
-const refreshToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const refreshToken = async (req: Request, res: Response) => {
   try {
     const { refreshToken }: RefreshTokenRequest = req.body;
-    if (
-      refreshToken &&
-      refreshTokens.findIndex((token) => token === refreshToken) > -1
-    ) {
-      const verified = jwt.verify(refreshToken, process.env.JWT_KEY || '');
+    if (refreshToken && refreshTokens.findIndex((token) => token === refreshToken) > -1) {
+      jwt.verify(refreshToken, process.env.JWT_KEY || '');
       const { _id } = parseJwt(refreshToken);
       const user = await User.findById(_id);
-      if (!user)
-        return res.status(404).json({ message: 'error.user.not_found' });
+      if (!user) return res.status(404).json({ message: 'error.user.not_found' });
 
       const expiredDate = moment().add(7, 'days').format();
       const token = tokenGen({ _id: user._id.toString(), role: user.role }, 7);
@@ -239,9 +185,7 @@ const refreshToken = async (
 
       return res.status(200).json({ accessToken: token, expiredDate });
     } else {
-      return res
-        .status(500)
-        .json({ message: 'error.auth.invalid_refresh_token' });
+      return res.status(500).json({ message: 'error.auth.invalid_refresh_token' });
     }
   } catch (err) {
     return res.status(500).json({ message: err });
@@ -255,5 +199,5 @@ export default {
   refreshToken,
   changePassword,
   forgotPassword,
-  resetPassword,
+  resetPassword
 };

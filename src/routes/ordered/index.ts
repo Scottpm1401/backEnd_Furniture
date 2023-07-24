@@ -1,20 +1,12 @@
 import { Router } from 'express';
-import { orderedController } from '../../controller';
-import { ValidateJoi, ValidateJoiParam } from '../../middleware/Joi';
+import { orderedController } from 'src/controller';
+import { ValidateJoi, ValidateJoiParam } from 'src/middleware/Joi';
 
-import { validateAdmin, validateToken } from '../../middleware/validate';
-import {
-  OrderedSchema,
-  ParamsSchema,
-} from '../../middleware/validationSchemas';
+import { validateAdmin, validateToken } from 'src/middleware/validate';
+import { OrderedSchema, ParamsSchema } from 'src/middleware/validationSchemas';
 const router = Router();
 
-router.get(
-  '/all',
-  validateToken,
-  validateAdmin,
-  orderedController.getOrderedList
-);
+router.get('/all', validateToken, validateAdmin, orderedController.getOrderedList);
 
 router.get('/getself', validateToken, orderedController.getSelfOrdered);
 

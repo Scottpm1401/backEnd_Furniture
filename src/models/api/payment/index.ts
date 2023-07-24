@@ -1,5 +1,5 @@
+import { BillingDetailsType } from 'src/models/purchase';
 import Stripe from 'stripe';
-import { BillingDetailsType } from '../../purchase';
 
 export type CheckoutRequest = {
   paymentMethodType: string;

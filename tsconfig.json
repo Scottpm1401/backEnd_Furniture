@@ -8,24 +8,27 @@
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "baseUrl": ".",
-    "jsx": "react",
-    "lib": ["dom", "es2017", "es2018"],
+    "rootDir": "./src",
+    "lib": ["ES2022"],
     "module": "commonjs",
     "moduleResolution": "node",
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es6",
+    "target": "ES2022",
     "allowJs": true,
     "typeRoots": ["./node_modules/@types"],
-    "rootDir": "./src",
     "esModuleInterop": true,
-    "outDir": "dist"
+    "outDir": "./dist",
+    "paths": {
+      "src/*": ["src/*"]
+    }
   },
-  "include": ["**/*.ts"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules"],
   "compileOnSave": false,
   "moduleResolution": ["node"],
   "ts-node": {
+    "require": ["tsconfig-paths/register"],
     "transpileOnly": true,
     "compilerOptions": {
       "module": "commonjs"

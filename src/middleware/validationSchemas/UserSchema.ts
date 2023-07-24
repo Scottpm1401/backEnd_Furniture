@@ -1,7 +1,7 @@
 import Joi from 'joi';
-import { UpdateSelfUserRequest } from '../../models/api/user';
-import { AddressType, UserInfoType, UserType } from '../../models/user';
-import { FORM_VALIDATE } from '../Joi';
+import { FORM_VALIDATE } from 'src/middleware/Joi';
+import { UpdateSelfUserRequest } from 'src/models/api/user';
+import { AddressType, UserInfoType, UserType } from 'src/models/user';
 
 const UserInfoSchema = Joi.object<UserInfoType>({
   first_name: Joi.string().max(30),
@@ -14,32 +14,26 @@ const UserInfoSchema = Joi.object<UserInfoType>({
     city: Joi.string(),
     state: Joi.string(),
     line1: Joi.string(),
-    line2: Joi.string(),
-  }),
+    line2: Joi.string()
+  })
 });
 
 const UserSchema = {
   update: Joi.object<UserType>({
     email: Joi.string().email(),
-    username: Joi.string()
-      .min(FORM_VALIDATE.username.min)
-      .max(FORM_VALIDATE.username.max),
-    password: Joi.string()
-      .min(FORM_VALIDATE.password.min)
-      .max(FORM_VALIDATE.password.max),
+    username: Joi.string().min(FORM_VALIDATE.username.min).max(FORM_VALIDATE.username.max),
+    password: Joi.string().min(FORM_VALIDATE.password.min).max(FORM_VALIDATE.password.max),
     birthday: Joi.string(),
     displayName: Joi.string(),
     role: Joi.string().valid('USER', 'ADMIN', 'SUPER_ADMIN', 'SHIPPER'),
-    info: UserInfoSchema,
+    info: UserInfoSchema
   }),
   update_self: Joi.object<UpdateSelfUserRequest>({
-    username: Joi.string()
-      .min(FORM_VALIDATE.username.min)
-      .max(FORM_VALIDATE.username.max),
+    username: Joi.string().min(FORM_VALIDATE.username.min).max(FORM_VALIDATE.username.max),
     displayName: Joi.string(),
     birthday: Joi.string(),
-    info: UserInfoSchema,
-  }),
+    info: UserInfoSchema
+  })
 };
 
 export default UserSchema;

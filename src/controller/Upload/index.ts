@@ -1,13 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import moment from 'moment';
-import { GetSignatureType, SignedUpload } from '../../models/upload';
-import cloudinary from '../../utils/cloudinary';
+import { GetSignatureType, SignedUpload } from 'src/models/upload';
+import cloudinary from 'src/utils/cloudinary';
 
-const getSignature = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getSignature = async (req: Request, res: Response) => {
   try {
     const { folder, public_id }: GetSignatureType = req.body;
     const timestamp = moment().unix();
@@ -18,7 +14,7 @@ const getSignature = async (
       {
         timestamp,
         folder,
-        public_id,
+        public_id
       },
       api_secret
     );
