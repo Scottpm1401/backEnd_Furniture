@@ -8,8 +8,7 @@
     "build": "tsc --build",
     "dev": "nodemon --exec ts-node src/index.ts",
     "lint": "eslint --fix .",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "vercel-build": "echo hello"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "husky": {
     "hooks": {
