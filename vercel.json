@@ -1,21 +1,4 @@
 {
   "version": 2,
-  // "builds": [
-  //   {
-  //     "src": "package.json",
-  //     "use": "@vercel/node",
-  //     "config": {
-  //       "installCommand": "yarn install",
-  //       "buildCommand": "yarn build"
-  //     }
-  //   }
-  // ],
-  // "routes": [
-  //   {
-  //     "src": "/(.*)",
-  //     "dest": "/src/index.ts"
-  //   }
-  // ],
-  "outputDirectory": ".",
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }
