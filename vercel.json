@@ -15,5 +15,7 @@
       "src": "/(.*)",
       "dest": "/src/index.ts"
     }
-  ]
+  ],
+  "public": true,
+  "outputDirectory": "dist"
 }
