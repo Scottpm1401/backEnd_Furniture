@@ -6,8 +6,7 @@
       "use": "@vercel/node",
       "config": {
         "installCommand": "yarn install",
-        "buildCommand": "yarn build",
-        "startCommand": "yarn start"
+        "buildCommand": "yarn build"
       }
     }
   ],
@@ -24,5 +23,6 @@
     "env": {
       "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
     }
-  }
+  },
+  "framework": null
 }
