@@ -1,5 +1,5 @@
 {
   "version": 2,
-  "builds": [{ "src": "dist/index.js", "use": "@now/node" }],
+  "builds": [{ "src": "dist/index.js", "use": "@vercel/node" }],
   "rewrites": [{ "source": "/(.*)", "destination": "dist/index.js" }]
 }
