@@ -8,7 +8,6 @@
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "baseUrl": ".",
-    "rootDir": "./src",
     "lib": ["ES2022"],
     "module": "commonjs",
     "moduleResolution": "node",
@@ -23,7 +22,7 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["./src/**/*"],
+  "include": ["./src/**/*", "./api/*.ts"],
   "exclude": ["node_modules"],
   "compileOnSave": false,
   "moduleResolution": ["node"],
