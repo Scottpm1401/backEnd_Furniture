@@ -3,7 +3,12 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "installCommand": "yarn install",
+        "buildCommand": "yarn build",
+        "startCommand": "yarn start"
+      }
     }
   ],
   "routes": [
