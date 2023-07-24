@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.ts",
+      "src": "src/**/*.{ts,json}",
       "use": "@vercel/node",
       "config": {
         "installCommand": "yarn install",
@@ -17,5 +17,12 @@
       "dest": "/src/index.ts"
     }
   ],
-  "framework": null
+  "env": {
+    "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
+  },
+  "build": {
+    "env": {
+      "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
+    }
+  }
 }
