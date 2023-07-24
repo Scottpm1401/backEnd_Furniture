@@ -22,7 +22,7 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["./src/**/*", "./api/*.ts"],
+  "include": ["./src/**/*"],
   "exclude": ["node_modules"],
   "compileOnSave": false,
   "moduleResolution": ["node"],
