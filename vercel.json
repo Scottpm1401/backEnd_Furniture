@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "public": true,
   "builds": [
     {
-      "src": "src/index.ts",
+      "src": "package.json",
       "use": "@vercel/node"
     }
   ],
@@ -12,5 +11,13 @@
       "src": "/(.*)",
       "dest": "/src/index.ts"
     }
-  ]
+  ],
+  "env": {
+    "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
+  },
+  "build": {
+    "env": {
+      "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
+    }
+  }
 }
