@@ -6,8 +6,7 @@
       "use": "@vercel/node",
       "config": {
         "installCommand": "yarn install",
-        "buildCommand": "yarn build",
-        "startCommand": "yarn start"
+        "buildCommand": "yarn build"
       }
     }
   ],
@@ -16,13 +15,5 @@
       "src": "/(.*)",
       "dest": "/src/index.ts"
     }
-  ],
-  "env": {
-    "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
-  },
-  "build": {
-    "env": {
-      "TS_NODE_COMPILER_OPTIONS": "{\"module\":\"commonjs\"}"
-    }
-  }
+  ]
 }
