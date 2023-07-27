@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { round } from 'lodash';
 import moment from 'moment';
-import { stripe } from 'src/..';
+import { stripe } from 'src';
 import { CheckoutRequest, CheckoutResponse, ConfirmPaymentRequest } from 'src/models/api/payment';
 import Product from 'src/models/product';
 import Purchase from 'src/models/purchase';
