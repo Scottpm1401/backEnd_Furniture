@@ -129,7 +129,7 @@ const StartServer = () => {
   app.use('/subscription', subscriptionRouter);
 
   /** Healthcheck */
-  app.get('/api/ping', (req, res) => res.status(200).json({ message: 'pung' }));
+  app.get('/ping', (req, res) => res.status(200).json({ message: 'pung' }));
 
   /** Error handling */
   app.use((req, res) => {
