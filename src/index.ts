@@ -85,7 +85,6 @@ const StartServer = () => {
       ]
     })
   );
-  app.use('/public', express.static('public'));
   app.set('trust proxy', 1);
 
   /** Rules of our API */
