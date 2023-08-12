@@ -10,10 +10,6 @@
       "dest": "/swagger"
     },
     {
-      "src": "/swagger-ui/(.*)",
-      "dest": "/swagger-ui"
-    },
-    {
       "src": "/(.*)",
       "dest": "/api",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
