@@ -1,0 +1,8 @@
+id:
+  in: path
+  name: id
+  required: true
+  description: ID
+  schema:
+    type: integer
+    example: 1

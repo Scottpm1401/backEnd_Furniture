@@ -1,0 +1,32 @@
+'200':
+  description: Success
+  content:
+    application/json:
+      $ref: './schemas.yml#/Success'
+    example:
+      success: true
+
+'401':
+  description: Not authenticated
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yml#/Error'
+      example:
+        message: 'error.auth.invalid_token'
+
+'500':
+  description: Internal server error
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yml#/Error'
+      example:
+        message: 'error.auth.invalid'
+
+UserLoginResponse:
+  description: 'Return to user info when login success'
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yml#/Session'

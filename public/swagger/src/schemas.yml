@@ -1,0 +1,46 @@
+Error:
+  type: object
+  properties:
+    message:
+      type: string
+
+Success:
+  type: object
+  properties:
+    success:
+      type: boolean
+
+Date:
+  description: Date
+  type: string
+  example: '2024-08-04T12:57:03+07:00'
+
+UserLogin:
+  type: object
+  properties:
+    email:
+      description: Email to login
+      type: string
+      example: user@example.com
+    username:
+      description: Username to login
+      type: string
+      example: user
+    password:
+      description: Password of user
+      type: string
+      example: user123
+
+Session:
+  type: object
+  properties:
+    accessToken:
+      description: Token to access application
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGNkZGVmN2ZhNTQxOTIxZjZiMWFhYWYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTY5MTIxNTAyMywiZXhwIjoxNjkxODE5ODIzfQ.bo_mfNRaztLXYSAcCyVuJnhqTGPdhEMtf9cdL_oR1GU
+    expiredDate:
+      $ref: '#/Date'
+    refreshToken:
+      description: Token to refresh access token when expired
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGNkZGVmN2ZhNTQxOTIxZjZiMWFhYWYiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTY5MTIxNTAyMywiZXhwIjoxNjkxODE5ODIzfQ.bo_mfNRaztLXYSAcCyVuJnhqTGPdhEMtf9cdL_oR1GU

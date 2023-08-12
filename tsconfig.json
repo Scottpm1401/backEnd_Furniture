@@ -22,7 +22,7 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["./src/**/*", "./api/index.ts"],
+  "include": ["./src/**/*", "./api/index.ts", "public"],
   "exclude": ["node_modules"],
   "compileOnSave": false,
   "moduleResolution": ["node"],
