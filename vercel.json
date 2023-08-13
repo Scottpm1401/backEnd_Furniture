@@ -6,7 +6,7 @@
   },
   "routes": [
     {
-      "src": "/.*",
+      "src": "(/.*)?$",
       "dest": "/api",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
