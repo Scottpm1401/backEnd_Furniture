@@ -6,7 +6,8 @@
   },
   "routes": [
     {
-      "src": "^/swagger(/.*)?$",
+      "src": "/swagger/.*",
+      "dest": "/swagger",
       "continue": true
     },
     {
