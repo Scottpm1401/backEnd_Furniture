@@ -6,8 +6,8 @@
   },
   "routes": [
     {
-      "src": "/swagger/.*",
-      "dest": "/swagger"
+      "src": "/swagger/swagger-ui.html",
+      "dest": "/swagger/swagger-ui.html"
     },
     {
       "src": "/.*",
