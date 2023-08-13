@@ -6,6 +6,11 @@
   },
   "routes": [
     {
+      "src": "/swagger/.*",
+      "dest": "/swagger",
+      "continue": true
+    },
+    {
       "src": "/.*",
       "dest": "/api",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -14,10 +19,6 @@
         "Access-Control-Allow-Origin": "https://comfysloth.store",
         "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization"
       }
-    },
-    {
-      "src": "/swagger/swagger-ui.html",
-      "dest": "/swagger/swagger-ui.html"
     }
   ]
 }
