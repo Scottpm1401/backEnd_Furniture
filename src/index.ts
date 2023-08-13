@@ -70,7 +70,7 @@ const StartServer = () => {
   /** Config cors and express body parser */
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
-  app.use(helmet());
+  // app.use(helmet());
   app.use(
     cors({
       origin: [process.env.FRONT_END_URL || '', 'http://localhost:3000'],
