@@ -6,11 +6,11 @@
   },
   "routes": [
     {
-      "src": "/swagger",
-      "dest": "/swagger/swagger-ui.html"
+      "src": "/swagger/.*",
+      "dest": "/swagger"
     },
     {
-      "src": "/(.*)",
+      "src": "/.*",
       "dest": "/api",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
